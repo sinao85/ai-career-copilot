@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <div className="flex justify-center items-center min-h-screen px-8">
@@ -12,9 +14,12 @@ export default function Home() {
           Transform your resume into career intelligence.
         </p>
 
-        <button className="mt-12 px-10 py-3.5 text-base font-medium text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] rounded-lg hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98 transition cursor-pointer border-none max-sm:w-full max-sm:max-w-80">
-          Upload Resume
-        </button>
+        <Link
+          href="/upload"
+          className="mt-12 px-10 py-3.5 text-base font-medium text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] rounded-lg hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98 transition inline-block max-sm:w-full max-sm:max-w-80"
+        >
+          Start Building Resume
+        </Link>
 
         <p className="mt-4 text-[13px] text-[#b0b0b0]">
           Supports PDF / DOCX
