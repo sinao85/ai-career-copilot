@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const steps = [
   { id: 1, label: "Extracting experience" },
@@ -10,6 +11,7 @@ const steps = [
 
 export default function AnalyzePage() {
   const [currentStep, setCurrentStep] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const timers = steps.map((_, i) =>
@@ -17,6 +19,13 @@ export default function AnalyzePage() {
     );
     return () => timers.forEach(clearTimeout);
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push("/profile");
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <div className="flex justify-center items-center min-h-screen px-8">
