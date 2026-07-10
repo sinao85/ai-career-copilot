@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useRef, type DragEvent } from "react";
+import { useRouter } from "next/navigation";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const handleFile = (selected: File | null) => {
     if (selected && (selected.type === "application/pdf" || selected.name.endsWith(".docx") || selected.name.endsWith(".doc"))) {
@@ -80,6 +82,7 @@ export default function UploadPage() {
         {/* Continue button */}
         <button
           disabled={!file}
+          onClick={() => router.push("/analyze")}
           className={`mt-8 px-10 py-3.5 text-base font-medium rounded-lg transition border-none w-full max-w-80 ${file ? "text-white bg-[#171717] hover:bg-[#333] dark:bg-[#ededed] dark:text-[#171717] dark:hover:bg-[#ccc] active:scale-98 cursor-pointer" : "text-[#a0a0a0] bg-[#e5e5e5] dark:text-[#666] dark:bg-[#2a2a2a] cursor-not-allowed"}`}
         >
           Continue
