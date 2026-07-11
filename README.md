@@ -1,163 +1,79 @@
 # AI Career Copilot
 
-An AI-powered career assistant.
+An AI-powered career assistant that helps users transform their experience into targeted career opportunities.
 
-Transform fragmented work experience into structured career intelligence.
+## Product Overview
 
+AI Career Copilot helps job seekers:
+- Analyze their resume
+- Understand career strengths
+- Match target job descriptions
+- Generate customized resumes
 
----
-
-# Product Vision
-
-
-Most professionals have valuable experience scattered across:
-
-- Resume
-- Documents
-- Notes
-- Project records
+The goal is to use AI to bridge the gap between personal experience and career opportunities.
 
 
-AI Career Copilot helps users understand:
+## MVP v0.1
 
-- Who they are professionally
-- What capabilities they have
-- How they match future opportunities
+Completed:
 
-
----
-
-# Features
-
-
-## Career Analysis
-
-Analyze:
-
-- Resume
-- Work documents
-- Project notes
+- Resume upload workflow
+- AI career profile experience
+- Target job description input
+- JD matching workflow
+- Customized resume generation
+- Word/PDF resume export
 
 
-Generate:
+## Product Workflow
 
-- Career Profile
-- Skills
-- Projects
-
-
----
-
-## Job Matching
-
-
-Compare:
-
-User experience
-
-vs
-
-Target Job
+Resume Upload
+↓
+AI Career Analysis
+↓
+Career Profile
+↓
+Target Job Analysis
+↓
+JD Matching
+↓
+Customized Resume
 
 
-Generate:
+## Product Vision
 
-- Strengths
-- Gaps
-- Recommendations
+Most professionals have valuable career experience scattered across:
+- Resumes
+- Project documents
+- Work materials
 
-
----
-
-## Resume Optimization
+AI Career Copilot aims to transform fragmented experience into structured career intelligence.
 
 
-Improve:
+## Roadmap
 
-Project descriptions
+Next iterations:
 
-while keeping facts unchanged.
+- Real LLM integration
+- Career knowledge base
+- RAG-based career assistant
+- Personalized career intelligence system
 
 
----
-
-# Tech Stack
-
+## Tech Stack
 
 Frontend:
-
-React
-
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
 
 Backend:
-
-Node.js
-
-
-AI:
-
-LLM Provider
+- TBD
 
 
----
+## Version History
 
-# Architecture
+### v0.1 Frontend MVP
 
-
-```
-
-Frontend
-
-↓
-
-Backend API
-
-↓
-
-AI Service
-
-↓
-
-LLM
-
-↓
-
-Structured Output
-
-```
-
-
----
-
-# Roadmap
-
-
-## V0.1
-
-LLM Career Analyzer
-
-
-## V0.2
-
-RAG Career Knowledge Base
-
-
-## V1.0
-
-Career Agent
-
-
----
-
-# Learning Goal
-
-
-This project is built as an AI Product Builder portfolio project.
-
-Focus:
-
-- Product design
-- AI application architecture
-- Prompt engineering
-- LLM integration
-- RAG evolution
+Completed the full frontend product workflow and validated the MVP user journey.
