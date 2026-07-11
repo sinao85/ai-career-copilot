@@ -23,7 +23,7 @@ export default function AnalyzePage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push("/profile");
-    }, 3000);
+    }, 4000);
     return () => clearTimeout(timer);
   }, [router]);
 

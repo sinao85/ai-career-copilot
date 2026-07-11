@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 const personalInfo = {
   name: "Alex Chen",
   phone: "+86 138-0000-0000",
@@ -55,6 +57,8 @@ const aiSkills = ["LLM Application Design", "Prompt Engineering", "AI Workflow D
 const technicalSkills = ["SQL", "Python Basics", "Figma", "Jira"];
 
 export default function CustomResumePage() {
+  const router = useRouter();
+
   const buildResumeHtml = () => {
     const expHtml = experiences
       .map(
@@ -414,6 +418,13 @@ export default function CustomResumePage() {
               </span>
             </button>
           </div>
+
+          <button
+            onClick={() => router.push("/")}
+            className="mt-4 w-full py-2.5 text-sm font-medium text-[#6b6b6b] dark:text-[#9b9b9b] hover:text-[#171717] dark:hover:text-[#ededed] transition cursor-pointer"
+          >
+            Back to Home
+          </button>
         </div>
       </main>
     </div>

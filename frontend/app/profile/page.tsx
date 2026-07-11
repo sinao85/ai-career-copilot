@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 const strengths = ["Product Strategy", "User Research", "AI Product Design"];
 const opportunities = ["Frontend Development", "AI Engineering"];
 const skills = [
@@ -9,6 +11,7 @@ const skills = [
 ];
 
 export default function ProfilePage() {
+  const router = useRouter();
   return (
     <div className="flex justify-center min-h-screen px-6 py-16">
       <main className="flex flex-col max-w-xl w-full">
@@ -95,8 +98,11 @@ export default function ProfilePage() {
         </div>
 
         {/* CTA Button */}
-        <button className="w-full px-10 py-3.5 text-base font-medium text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] rounded-lg hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98 transition cursor-pointer border-none">
-          Optimize My Resume
+        <button
+          onClick={() => router.push("/jd")}
+          className="w-full px-10 py-3.5 text-base font-medium text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] rounded-lg hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98 transition cursor-pointer border-none"
+        >
+          Analyze Target Job
         </button>
       </main>
     </div>

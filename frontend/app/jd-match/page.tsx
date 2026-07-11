@@ -1,3 +1,7 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 const strengths = ["Product Strategy", "User Research", "AI Product Design"];
 const gaps = ["Backend Development", "LLM API Integration", "AI Engineering"];
 const suggestions = [
@@ -7,6 +11,7 @@ const suggestions = [
 ];
 
 export default function JDMatchPage() {
+  const router = useRouter();
   return (
     <div className="flex justify-center min-h-screen px-6 py-16">
       <main className="flex flex-col max-w-xl w-full">
@@ -91,7 +96,10 @@ export default function JDMatchPage() {
         </div>
 
         {/* CTA */}
-        <button className="w-full px-10 py-3.5 text-base font-medium text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] rounded-lg hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98 transition cursor-pointer border-none">
+        <button
+          onClick={() => router.push("/custom-resume")}
+          className="w-full px-10 py-3.5 text-base font-medium text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] rounded-lg hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98 transition cursor-pointer border-none"
+        >
           Generate Customized Resume
         </button>
       </main>
