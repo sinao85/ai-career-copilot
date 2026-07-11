@@ -1,353 +1,214 @@
-# AI Career Copilot API Design
+# API Design
 
-Version: V0.1
+## 1. Overview
 
+Backend 负责：
 
----
+- 接收用户职业资料（Resume + Work Materials）
+- 提取上传文档内容
+- 调用 AI 模型进行职业理解
+- 生成结构化 Career Profile
+- 为前端提供职业分析、JD 匹配、简历生成能力
 
-# 1. API设计目标
-
-API负责连接：
-
-Frontend
-
-和
-
-AI Backend
+The Backend is designed around structured AI outputs rather than free-form text, ensuring that frontend components can reliably render, compare, and edit AI-generated career insights.
 
 
-目标：
-
-1. 接收用户输入
-2. 调用AI能力
-3. 返回结构化结果
+## 2. API List
 
 
----
+### POST /api/analyze
 
-# 2. API架构
+用途：
 
-
-```
-
-Frontend
-
-↓
-
-HTTP Request
-
-↓
-
-Backend API
-
-↓
-
-AI Service
-
-↓
-
-LLM Provider
-
-↓
-
-Response
-
-```
-
-
----
-
-# 3. 通用规范
-
-
-## Base URL
-
-Development:
-
-```
-
-http://localhost:3000
-
-```
-
-
----
-
-## 数据格式
-
-Request:
-
-JSON
-
-
-Response:
-
-JSON
-
-
----
-
-# 4. Career Analysis API
-
-
-## Endpoint
-
-```
-
-POST /api/analyze-career
-
-```
-
-
----
-
-## 功能
-
-分析用户职业资料。
+该接口用于将用户上传的 Resume 和 Work Materials 转换为结构化职业信息。
 
 
 输入：
 
-- 简历
-- 工作资料
+multipart/form-data
+
+
+参数：
+
+resume:
+PDF/DOCX
+
+
+work_materials:
+PDF/DOCX/图片/文本文件
+
+
+返回：
+
+JSON
+
+
+示例：
+
+{
+"profile":{
+"career_direction":"",
+"strengths":[],
+"skills":[],
+"growth_areas":[],
+"projects":[
+  {
+   "name":"",
+   "role":"",
+   "achievement":""
+  }
+]
+}
+}
+
+
+说明：
+
+projects 字段用于保存 AI 从用户工作资料中提取出的项目经历，为后续 JD 匹配和简历生成提供基础。
+
+
+---
+
+### POST /api/match
+
+用途：
+
+JD匹配。
+
+
+输入：
+
+{
+"career_profile":{},
+"job_description":"AI Product Manager..."
+}
 
 
 输出：
 
-- 职业画像
-- 技能
-- 项目
-
-
----
-
-## Request
-
-
-```json
 {
- "resume":
- "产品经理，负责健康产品",
-
- "career_notes":
- "负责用户增长项目"
+"match_score":85,
+"strengths":[],
+"gaps":[],
+"suggestions":[]
 }
-```
+
+
+说明：
+
+该接口不仅用于计算匹配度，还需要提供：
+
+- 用户匹配优势
+- 岗位能力差距
+- 简历优化建议
+
 
 ---
 
-## Backend处理流程
+### POST /api/generate-resume
 
-```
-Receive Data
+用途：
 
+该接口用于根据：
+
+- Career Profile
+- Target Job Description
+
+生成针对目标岗位优化后的简历。
+
+
+输出结构化内容：
+
+{
+"summary":"",
+"experience":[],
+"projects":[],
+"skills":[]
+}
+
+
+说明：
+
+避免只返回一段文本，确保输出结构化内容便于前端展示和编辑。
+
+
+---
+
+## 3. Data Flow
+
+描述：
+
+Frontend
 ↓
-
-Build Prompt
-
+Backend API
 ↓
-
-Call LLM
-
+Document Parser
 ↓
-
-Validate JSON
-
+Career Information Extraction
 ↓
+LLM Reasoning
+↓
+Structured JSON Response
+↓
+Frontend Display
 
-Return Result
 
-```
+说明：
 
----
+Document Parser 负责提取文档内容；
+Career Information Extraction 负责从资料中提炼用户经历；
+LLM 负责理解和生成职业洞察。
 
-## Response
-
-```json
-{
- "career_profile":{
-   "role":"产品经理",
-   "career_direction":"增长产品"
- },
-
- "skills":[
-   {
-    "name":"用户增长",
-    "evidence":"负责增长项目"
-   }
- ],
-
- "projects":[]
-}
-```
 
 ---
 
-# 5. Job Match API
+## 4. Error Handling
 
-## Endpoint
+包括：
 
-```
-POST /api/match-job
-```
+- 文件格式错误
+- 文件为空
+- AI生成失败
 
----
-
-## 功能
-
-分析：
-
-用户能力
-
-vs
-
-岗位要求。
 
 ---
 
-## Request
+## 5. API Responsibility
 
-```json
-{
- "career_profile": {},
+说明每个 API 的职责：
 
- "job_description":
- "AI产品经理岗位"
-}
-```
 
----
+### Analyze API
 
-## Response
+负责：
 
-```json
-{
- "score":80,
+将用户上传的职业资料转换为结构化职业信息。
 
- "strengths":[
- "用户增长经验"
- ],
 
- "gaps":[
- "AI项目经验"
- ],
+### Match API
 
- "recommendations":[
- "增加AI应用实践"
- ]
-}
-```
+负责：
+
+比较用户职业能力与目标岗位需求，输出匹配分析。
+
+
+### Generate Resume API
+
+负责：
+
+根据岗位要求重新组织用户经历，生成针对性的简历内容。
+
 
 ---
 
-# 6. Resume Optimization API
+注意：
 
-## Endpoint
+这是 AI Career Copilot MVP 阶段 API Design 文档。
 
-```
-POST /api/optimize-resume
-```
+不要加入：
+- 微服务架构
+- 数据库设计
+- RAG实现
+- Agent workflow
 
----
-
-## 功能
-
-优化项目经历表达。
-
----
-
-## Request
-
-```json
-{
- "project":{
-
- },
-
- "job_description":""
-}
-```
-
----
-
-## Response
-
-```json
-{
- "original":"负责增长",
-
- "optimized":
- "负责用户增长策略设计",
-
- "reason":
- "突出产品价值"
-}
-```
-
----
-
-# 7. Error Handling
-
-## 参数为空
-
-Response:
-
-```json
-{
- "error":
- "Missing required field"
-}
-```
-
----
-
-## AI调用失败
-
-Response:
-
-```json
-{
- "error":
- "AI service unavailable"
-}
-```
-
----
-
-## JSON解析失败
-
-处理：
-
-1. Retry
-2. 返回错误
-3. 记录日志
-
----
-
-# 8. API未来扩展
-
-## RAG接口
-
-未来：
-
-```
-POST /api/search-career-memory
-```
-
-功能：
-
-检索职业知识库。
-
----
-
-## Agent接口
-
-未来：
-
-```
-POST /api/career-agent
-```
-
-功能：
-
-执行复杂职业任务。
+这些属于未来版本规划。
