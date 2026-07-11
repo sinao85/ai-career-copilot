@@ -1,3 +1,21 @@
+# AI Career Copilot 
+
+## Version History 
+
+### v0.1 Frontend MVP 
+
+Completed: 
+- Resume upload workflow 
+- Career profile generation flow 
+- JD analysis workflow 
+- Customized resume preview 
+- Resume export 
+
+Status: 
+Frontend prototype completed
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
