@@ -1,0 +1,196 @@
+# Development Log
+
+## 2026-07-12 Backend Document Understanding MVP
+
+### Goal
+
+Implement the first backend capability for AI Career Copilot:
+
+Convert uploaded resume files into structured text data that can be used for future AI career analysis.
+
+---
+
+## Completed
+
+### 1. Backend API Refactoring
+
+Changed backend structure from single-file API implementation to modular architecture.
+
+Before:
+
+```
+main.py
+├── API routes
+├── business logic
+└── service logic
+```
+
+After:
+
+```
+app
+├── main.py
+├── api
+│   └── analyze.py
+└── services
+    └── document_parser.py
+```
+
+Responsibilities:
+
+- main.py: application initialization and router registration
+- analyze.py: resume analysis API
+- document_parser.py: document extraction logic
+
+---
+
+### 2. Resume Upload API Enhancement
+
+Updated `/api/analyze`
+
+Before:
+
+- Only received uploaded file information
+
+After:
+
+- Receive resume file
+- Parse resume content
+- Return extracted text
+
+Current flow:
+
+```
+Resume PDF
+↓
+FastAPI UploadFile
+↓
+Document Parser
+↓
+Extract Text
+↓
+Return JSON
+```
+
+---
+
+### 3. PDF Text Extraction
+
+Implemented PDF parser using `pypdf`.
+
+Input:
+
+```
+resume.pdf
+```
+
+Output:
+
+```json
+{
+  "filename": "resume.pdf",
+  "text": "resume content..."
+}
+```
+
+---
+
+## Problems & Solutions
+
+### Problem 1: Virtual Environment Management
+
+Issue:
+
+Accidentally considered uploading Python virtual environment into Git.
+
+Solution:
+
+Added ignore rules:
+
+```
+venv/
+.venv/
+__pycache__/
+temp.pdf
+```
+
+Lesson:
+
+Local development environments should not be committed.
+Only dependency definitions such as `requirements.txt` should be managed.
+
+---
+
+### Problem 2: API Validation Error (422)
+
+Issue:
+
+`/api/analyze` returned:
+
+```
+Expected UploadFile, received: <class 'str'>
+```
+
+Cause:
+
+Swagger sent an empty string for `work_materials` instead of an uploaded file.
+
+Solution:
+
+Disabled "Send empty value" in Swagger testing.
+
+Lesson:
+
+API input validation depends not only on backend definitions but also on how clients send data.
+
+---
+
+### Problem 3: Debugging Async API Process
+
+Issue:
+
+API request remained loading without response.
+
+Investigation:
+
+Added debug logs inside document parser:
+
+```
+Start reading file
+File size
+Start PDF parsing
+PDF pages
+Extracted text length
+```
+
+Lesson:
+
+AI application debugging requires observing each step of the data pipeline.
+
+---
+
+## Key Learning
+
+This iteration completed the first real AI application data pipeline:
+
+```
+User Upload
+    ↓
+Backend API
+    ↓
+Document Processing
+    ↓
+Extracted Knowledge
+```
+
+The next step is:
+
+```
+Resume Text
+    ↓
+AI Career Extraction
+    ↓
+Career Profile JSON
+```
+
+This will introduce the first AI reasoning capability.
