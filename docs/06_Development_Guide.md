@@ -1,104 +1,307 @@
-# AI Career Copilot Development Environment Setup
+# AI Career Copilot Development Guide
+
+> **Merge History**: This document was created by merging `06_Development_Plan.md` and `07_Development_Environment_Setup.md` on 2026-07-13.
 
 Version: V0.1
 
-Purpose:
+---
 
-本文件用于指导 AI Career Copilot 项目在不同电脑环境之间迁移和恢复开发。
+# 1. 开发目标
 
-适用场景：
+在3天内完成：
 
-- 公司 Mac 开发
-- 个人 Windows 开发
-- 新电脑重新配置
-- 团队成员加入项目
+AI Career Copilot MVP Demo。
 
+实现：
+
+```
+用户输入职业资料
+    ↓
+AI分析
+    ↓
+生成职业画像
+```
 
 ---
 
-# 1. 开发环境原则
+# 2. 开发原则
 
+## Principle 1
 
-## 1.1 代码不依赖单台电脑
+先完成闭环。
+
+不要先优化：
+
+- UI
+- 架构
+- 数据库
+
+---
+
+## Principle 2
+
+保持简单。
+
+V0.1：
+
+不做：
+
+- 登录
+- 数据库
+- RAG
+- Agent
+
+---
+
+# 3. 开发阶段
+
+## Day 1：Frontend Prototype
+
+**目标：**
+
+完成产品界面。
+
+---
+
+**任务：**
+
+### 初始化React项目
+
+完成：
+
+- 项目创建
+- 页面结构
+
+---
+
+### 输入页面
+
+包含：
+
+```
+简历输入框
+工作资料输入框
+目标岗位输入框
+分析按钮
+```
+
+---
+
+### Result页面
+
+展示：
+
+```
+职业画像
+技能
+项目
+```
+
+**数据：**
+
+使用Mock。
+
+不连接AI。
+
+---
+
+**Day 1验收标准**
+
+用户可以：
+
+输入资料 → 点击按钮 → 看到模拟结果。
+
+---
+
+## Day 2：AI Integration
+
+**目标：**
+
+接入LLM。
+
+---
+
+**任务：**
+
+### Backend创建
+
+完成：
+
+Node.js API。
+
+---
+
+### AI Service
+
+实现：
+
+```
+Frontend
+    ↓
+Backend
+    ↓
+AI Service
+    ↓
+LLM
+```
+
+---
+
+### Career Analyzer
+
+接入：
+
+career analyzer prompt。
+
+---
+
+**Day 2验收标准**
+
+用户输入真实简历 → 得到AI职业分析结果。
+
+---
+
+## Day 3：产品完善
+
+**任务：**
+
+### JD匹配
+
+增加：
+
+岗位分析。
+
+---
+
+### 简历优化
+
+增加：
+
+优化建议。
+
+---
+
+### Error Handling
+
+处理：
+
+- 空输入
+- AI失败
+
+---
+
+# 4. Cursor开发方式
+
+不要一次生成整个项目。
+
+采用：
+
+小任务驱动。
+
+每次告诉Cursor：
+
+```
+背景：
+我要开发AI Career Copilot。
+
+当前任务：
+xxx
+
+限制：
+保持简单，不增加额外功能。
+
+完成后说明：
+修改文件
+代码作用
+运行方式
+```
+
+---
+
+# 5. 后续优化路线
+
+## V0.2
+
+增加：
+
+- 数据保存
+- 用户账号
+- RAG知识库
+
+---
+
+## V1.0
+
+增加：
+
+Career Agent。
+
+支持：
+
+- 面试准备
+- 职业规划
+- 学习建议
+
+---
+
+# 6. 开发环境原则
+
+## 6.1 代码不依赖单台电脑
 
 项目代码必须通过 Git 管理。
 
 开发环境：
 
 ```
-
 Computer
-
-↓
-
+    ↓
 Git Repository
-
-↓
-
+    ↓
 GitHub
-
-↓
-
+    ↓
 Another Computer
-
 ```
-
 
 代码、文档、配置说明进入 Git。
 
 本地环境不进入 Git。
 
-
 ---
 
-## 1.2 不上传本地依赖
-
+## 6.2 不上传本地依赖
 
 禁止上传：
 
 ```
-
 node_modules
 .env
 系统配置文件
 个人密钥
-
 ```
-
 
 Git保存：
 
 ```
-
 package.json
-
 package-lock.json
-
 source code
-
 documentation
-
 ```
-
 
 换电脑后重新安装依赖。
 
-
 ---
 
-# 2. 必备开发环境
-
+# 7. 必备开发环境
 
 所有开发机器需要：
 
-## 2.1 Git
-
+## 7.1 Git
 
 用途：
 
 - 版本管理
 - 同步代码
-
 
 检查：
 
@@ -114,7 +317,7 @@ git version x.x.x
 
 ---
 
-## 2.2 Node.js
+## 7.2 Node.js
 
 用途：
 
@@ -131,7 +334,7 @@ node -v
 
 ---
 
-## 2.3 Cursor
+## 7.3 Cursor
 
 用途：
 
@@ -144,7 +347,7 @@ AI辅助开发。
 
 ---
 
-# 3. Node版本管理
+# 8. Node版本管理
 
 ## 问题
 
@@ -155,16 +358,9 @@ AI辅助开发。
 
 例如：
 
-Mac:
-
 ```
-Node 22
-```
-
-Windows:
-
-```
-Node 20
+Mac: Node 22
+Windows: Node 20
 ```
 
 可能产生兼容问题。
@@ -191,29 +387,23 @@ Node 20
 
 ---
 
-# 4. 项目目录规范
+# 9. 项目目录规范
 
 项目结构：
 
 ```
 ai-career-copilot
-
 ├── docs
-
 ├── frontend
-
 ├── backend
-
 ├── README.md
-
 ├── package.json
-
 └── .gitignore
 ```
 
 ---
 
-# 5. Git忽略文件
+# 10. Git忽略文件
 
 根目录：
 
@@ -225,19 +415,13 @@ ai-career-copilot
 
 ```
 node_modules/
-
 .env
-
 .DS_Store
-
 dist/
-
 build/
 ```
 
 ---
-
-解释：
 
 ## node_modules
 
@@ -272,7 +456,7 @@ DATABASE_PASSWORD
 
 ---
 
-# 6. 环境变量管理
+# 11. 环境变量管理
 
 ## 错误方式
 
@@ -315,14 +499,12 @@ process.env.LLM_API_KEY
 步骤：
 
 1. 创建.env
-
 2. 填入自己的Key
-
 3. 不提交Git
 
 ---
 
-# 7. Mac → Windows迁移流程
+# 12. Mac → Windows迁移流程
 
 ## Step 1
 
@@ -332,9 +514,7 @@ process.env.LLM_API_KEY
 
 ```bash
 git add .
-
 git commit -m "update feature"
-
 git push
 ```
 
@@ -356,11 +536,6 @@ Clone项目
 
 ```bash
 git clone <repository-url>
-```
-
-进入：
-
-```bash
 cd ai-career-copilot
 ```
 
@@ -372,7 +547,6 @@ cd ai-career-copilot
 
 ```bash
 cd frontend
-
 npm install
 ```
 
@@ -384,7 +558,6 @@ npm install
 
 ```bash
 cd backend
-
 npm install
 ```
 
@@ -426,9 +599,9 @@ npm run dev
 
 ---
 
-# 8. Mac和Windows代码注意事项
+# 13. Mac和Windows代码注意事项
 
-## 8.1 文件路径
+## 13.1 文件路径
 
 不要：
 
@@ -452,7 +625,7 @@ path.join()
 
 ---
 
-## 8.2 文件名称大小写
+## 13.2 文件名称大小写
 
 Mac:
 
@@ -493,7 +666,7 @@ CareerService.js
 
 ---
 
-# 9. Cursor使用规范
+# 14. Cursor使用规范
 
 打开项目后：
 
@@ -511,7 +684,6 @@ Prompt:
 请阅读docs目录中的所有设计文档。
 
 理解：
-
 1. 产品目标
 2. 技术架构
 3. 当前开发阶段
@@ -521,7 +693,7 @@ Prompt:
 
 ---
 
-# 10. 开发提交规范
+# 15. 开发提交规范
 
 每完成一个功能：
 
@@ -531,9 +703,7 @@ Prompt:
 
 ```
 git add .
-
 git commit -m "功能描述"
-
 git push
 ```
 
@@ -541,13 +711,12 @@ git push
 
 ```
 git commit -m "create career input page"
-
 git commit -m "integrate llm service"
 ```
 
 ---
 
-# 11. 常见问题
+# 16. 常见问题
 
 ## npm install失败
 
@@ -581,13 +750,9 @@ npm install
 
 ```bash
 git status
-
 git pull
-
 解决冲突
-
 git commit
-
 git push
 ```
 
@@ -598,21 +763,17 @@ git push
 检查：
 
 1. .env是否存在
-
 2. Key是否正确
-
 3. Backend是否启动
 
 ---
 
-# 12. 新电脑恢复Checklist
+# 17. 新电脑恢复Checklist
 
 ## Environment
 
 [ ] Git安装
-
 [ ] Node安装
-
 [ ] Cursor安装
 
 ---
@@ -620,11 +781,8 @@ git push
 ## Project
 
 [ ] Clone GitHub
-
 [ ] npm install frontend
-
 [ ] npm install backend
-
 [ ] 创建.env
 
 ---
@@ -632,14 +790,12 @@ git push
 ## Verify
 
 [ ] Frontend运行
-
 [ ] Backend运行
-
 [ ] AI API正常调用
 
 ---
 
-# 13. 最重要原则
+# 18. 最重要原则
 
 代码属于项目。
 
@@ -647,14 +803,6 @@ git push
 
 只要：
 
-GitHub存在
-
-*
-
-文档完整
-
-*
-
-环境说明清晰
+GitHub存在 * 文档完整 * 环境说明清晰
 
 任何电脑都可以恢复开发。

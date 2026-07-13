@@ -37,7 +37,6 @@ AI闭环。
 - Gemini
 - 国内大模型
 
-
 ---
 
 ## 2.3 AI输出结构化
@@ -55,39 +54,21 @@ AI输出 JSON。
 # 3. 系统架构
 
 ```
-
 User
-
-↓
-
-Frontend
-React
-
-↓
-
-Backend API
-Node.js
-
-↓
-
+    ↓
+Frontend (React)
+    ↓
+Backend API (Node.js)
+    ↓
 AI Service Layer
-
-↓
-
+    ↓
 LLM Provider
-
-↓
-
+    ↓
 LLM Model
-
-↓
-
+    ↓
 Structured JSON
-
-↓
-
+    ↓
 Frontend Display
-
 ```
 
 ---
@@ -102,11 +83,9 @@ Frontend Display
 - 页面展示
 - API调用
 
-
 技术：
 
 React
-
 
 ---
 
@@ -119,11 +98,9 @@ React
 - AI调用
 - 数据转换
 
-
 技术：
 
 Node.js
-
 
 ---
 
@@ -133,26 +110,18 @@ Node.js
 
 统一管理模型调用。
 
-
 避免业务代码直接依赖模型。
-
 
 ---
 
 # 5. 项目结构
 
 ```
-
 ai-career-copilot
-
 ├── frontend
-
 ├── backend
-
 ├── docs
-
 └── README.md
-
 ```
 
 ---
@@ -160,20 +129,13 @@ ai-career-copilot
 # 6. Backend结构
 
 ```
-
 backend
-
 ├── routes
-
 ├── services
 │   └── aiService
-
 ├── prompts
-
 ├── llm
-
 └── utils
-
 ```
 
 ---
@@ -181,37 +143,21 @@ backend
 # 7. AI调用流程
 
 ```
-
 用户输入
-
-↓
-
+    ↓
 Frontend
-
-↓
-
+    ↓
 Backend API
-
-↓
-
+    ↓
 Prompt Template
-
-↓
-
+    ↓
 AI Service
-
-↓
-
+    ↓
 LLM Provider
-
-↓
-
+    ↓
 JSON Response
-
-↓
-
+    ↓
 Frontend展示
-
 ```
 
 ---
@@ -221,17 +167,11 @@ Frontend展示
 Input:
 
 ```
-
 Resume
-
 *
-
 Career Notes
-
 *
-
 Job Description
-
 ```
 
 ↓
@@ -243,61 +183,21 @@ AI Processing
 Output:
 
 ```
-
 Career Profile
-
 Skills
-
 Projects
-
 Job Match
-
 Resume Optimization
-
 ```
 
 ---
 
-# 9. 未来RAG升级
+# 9. 产品演进路线
 
-V0.2:
-
-```
-
-Career Documents
-
-↓
-
-Document Processing
-
-↓
-
-Embedding
-
-↓
-
-Vector Database
-
-↓
-
-Retriever
-
-↓
-
-LLM
-
-↓
-
-Answer
-
-```
+详见 `01_PRD.md` 第9节：产品演进路线。
 
 ---
 
 # 10. 当前不实现
 
-- RAG
-- Database
-- Authentication
-- Agent
-- Model Training
+详见 `01_PRD.md` 第10节：当前开发重点。

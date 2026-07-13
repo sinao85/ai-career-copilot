@@ -1,6 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, UploadFile, File
 from app.services.document_parser import extract_text
+from app.services.career_analyzer import analyze_resume
 
 
 router = APIRouter()
@@ -14,13 +15,19 @@ async def analyze(
 
     resume_text = await extract_text(resume)
 
+    print("========== RESUME TEXT ==========")
+    print(resume_text[:1000])
+    print("=================================")
+
+
+    profile = analyze_resume(resume_text)
+
+
     materials = work_materials or []
 
+
     return {
-        "resume": {
-            "filename": resume.filename,
-            "text": resume_text
-        },
+        "profile": profile.dict(),
 
         "work_materials": [
             {
