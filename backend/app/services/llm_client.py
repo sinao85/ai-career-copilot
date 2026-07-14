@@ -13,7 +13,11 @@ class LLMConfig:
         max_tokens: int = 2048,
     ):
         self.api_key = api_key or os.getenv("LLM_API_KEY", "")
-        self.model = model or os.getenv("LLM_MODEL","deepseek-chat")
+        self.model = (
+    model
+    or os.getenv("LLM_MODEL")
+    or "deepseek-chat"
+)
         self.base_url = base_url or os.getenv("LLM_BASE_URL")
         self.temperature = temperature
         self.max_tokens = max_tokens
