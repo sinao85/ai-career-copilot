@@ -194,3 +194,27 @@ Career Profile JSON
 ```
 
 This will introduce the first AI reasoning capability.
+
+## 2026-07-16 MacBook Air M5 Development Environment Migration
+
+Completed migration from previous development environment to personal MacBook Air M5.
+
+Environment setup:
+- macOS 26.5.1
+- Apple M5 / 16GB RAM
+- Homebrew 6.0.11
+- Node.js v26.5.0
+- Python 3.14.6
+- uv 0.11.29
+- Trae IDE
+
+Completed:
+- Configured GitHub SSH authentication
+- Cloned AI Career Copilot repository
+- Installed frontend dependencies
+- Successfully launched Next.js frontend locally
+
+Next:
+- Restore FastAPI backend environment
+- Connect LLM API
+- Continue AI capability development
