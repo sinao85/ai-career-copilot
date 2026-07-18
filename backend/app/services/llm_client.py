@@ -1,23 +1,22 @@
 import os
-import json
 from typing import Optional
 
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()
 
 class LLMConfig:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "Optional[str] = None",
+        model: Optional[str] = None,
         base_url: Optional[str] = None,
         temperature: float = 0.7,
         max_tokens: int = 2048,
     ):
         self.api_key = api_key or os.getenv("LLM_API_KEY", "")
-        self.model = (
-    model
-    or os.getenv("LLM_MODEL")
-    or "deepseek-chat"
-)
+        self.model = model or os.getenv("LLM_MODEL") or "deepseek-chat"
         self.base_url = base_url or os.getenv("LLM_BASE_URL")
         self.temperature = temperature
         self.max_tokens = max_tokens
@@ -27,32 +26,34 @@ def call_llm(prompt: str, config: Optional[LLMConfig] = None) -> str:
     """
     统一 LLM 调用入口。
 
-    当前返回 mock 响应，接入真实 API 时只需替换此函数实现。
+    使用 OpenAI SDK 调用远程 LLM API，返回模型响应文本。
     """
     if config is None:
         config = LLMConfig()
 
-    return _mock_call(prompt, config)
+    try:
+        client = OpenAI(
+            api_key=config.api_key,
+            base_url=config.base_url,
+        )
 
+        response = client.chat.completions.create(
+            model=config.model,
+            messages=[
+        {
+            "role": "system",
+            "content": "你是一名资深职业规划顾问，负责分析用户简历并输出结构化职业画像。"
+        },
+        {
+            "role": "user",
+            "content": prompt,
+        }
+    ],
+            temperature=config.temperature,
+            max_tokens=config.max_tokens,
+        )
 
-def _mock_call(prompt: str, config: LLMConfig) -> str:
-    preview = prompt.strip()[:120].replace("\n", " ")
+        return response.choices[0].message.content
 
-    result = {
-        "summary": f"[Mock LLM] 基于输入的分析结果。Prompt 长度: {len(prompt)} 字符。"
-                   f"模型: {config.model}。输入预览: {preview}...",
-        "strengths": [
-            "专业领域经验丰富",
-            "团队协作与沟通能力强",
-            "具备数据驱动的分析能力",
-        ],
-        "skills": [
-            "项目管理",
-            "需求分析",
-            "系统设计",
-            "数据分析",
-        ],
-        "career_direction": "综合发展方向",
-    }
-
-    return json.dumps(result, ensure_ascii=False, indent=2)
+    except Exception as e:
+        raise RuntimeError(f"LLM API 调用失败: {e}") from e

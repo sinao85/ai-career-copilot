@@ -10,8 +10,13 @@ router = APIRouter()
 @router.post("/api/analyze")
 async def analyze(
     resume: UploadFile = File(...),
-    work_materials: Optional[list[UploadFile]] = File(default=None)
+    work_materials: Optional[list[UploadFile]] = File(
+    default=None,
+    description="Optional supporting files"
+)
 ):
+
+
 
     resume_text = await extract_text(resume)
 
