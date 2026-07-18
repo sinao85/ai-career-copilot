@@ -233,4 +233,35 @@ Issues resolved:
 - .env loading
 - Swagger multipart upload compatibility
 - Structured LLM output parsing
+
+## 2026-07-18 LLM Integration
+
+### Completed
+
+- Added OpenAI SDK based LLM client
+- Integrated DeepSeek API
+- Added environment variable configuration
+- Implemented resume analysis pipeline
+
+### Architecture
+
+Resume PDF
+→ PDF Parser
+→ Career Analyzer
+→ LLM Client
+→ Structured Career Profile
+
+### Problems Solved
+
+1. Mac Python environment issue
+2. dotenv loading issue
+3. LLM JSON parsing issue
+
+### Next
+
+- Connect frontend upload flow with backend API
+- Generate customized resume
+- Add JD matching capability
+
+### Learning
 - Swagger UI 上传失败，但 curl 成功，主要是swagger ui会错误解析，Swagger 对 multipart file array 支持不是特别友好。所以用curl测试绕过解析测试接口成功
