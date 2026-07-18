@@ -218,3 +218,19 @@ Next:
 - Restore FastAPI backend environment
 - Connect LLM API
 - Continue AI capability development
+
+feat: integrate real LLM resume analysis
+
+Completed:
+- Added OpenAI-compatible LLM client
+- Connected DeepSeek API
+- Implemented environment variable configuration
+- Replaced mock LLM response
+- Validated PDF -> Text -> LLM -> JSON pipeline
+
+Issues resolved:
+- Python environment configuration
+- .env loading
+- Swagger multipart upload compatibility
+- Structured LLM output parsing
+- Swagger UI 上传失败，但 curl 成功，主要是swagger ui会错误解析，Swagger 对 multipart file array 支持不是特别友好。所以用curl测试绕过解析测试接口成功
