@@ -40,15 +40,20 @@ def call_llm(prompt: str, config: Optional[LLMConfig] = None) -> str:
         response = client.chat.completions.create(
             model=config.model,
             messages=[
-        {
-            "role": "system",
-            "content": "你是一名资深职业规划顾问，负责分析用户简历并输出结构化职业画像。"
-        },
-        {
-            "role": "user",
-            "content": prompt,
-        }
-    ],
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a senior career advisor. "
+                        "Always output in the same primary language as the resume content provided by the user. "
+                        "If the resume is in Chinese, respond in Chinese. If the resume is in English, respond in English. "
+                        "Do NOT default to Chinese just because of your training data."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": prompt,
+                },
+            ],
             temperature=config.temperature,
             max_tokens=config.max_tokens,
         )

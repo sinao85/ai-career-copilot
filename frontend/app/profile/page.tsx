@@ -1,17 +1,86 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const strengths = ["Product Strategy", "User Research", "AI Product Design"];
-const opportunities = ["Frontend Development", "AI Engineering"];
-const skills = [
-  { name: "Product Management", value: 90 },
-  { name: "AI Knowledge", value: 70 },
-  { name: "Coding", value: 50 },
-];
+interface CareerProfile {
+  summary: string;
+  strengths: string[];
+  skills: string[];
+  career_direction: string;
+}
+
+interface CareerAnalysisResult {
+  profile: CareerProfile;
+  work_materials: unknown[];
+}
 
 export default function ProfilePage() {
   const router = useRouter();
+  const [profile, setProfile] = useState<CareerProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("careerAnalysisResult");
+
+      if (!raw) {
+        setErrorMessage(
+          "No career analysis found. Please upload your resume again."
+        );
+        return;
+      }
+
+      const parsed: unknown = JSON.parse(raw);
+      const data = parsed as CareerAnalysisResult;
+
+      if (!data?.profile) {
+        setErrorMessage(
+          "No career analysis found. Please upload your resume again."
+        );
+        return;
+      }
+
+      setProfile(data.profile);
+    } catch (error: unknown) {
+      console.error("Failed to parse career analysis result:", error);
+      setErrorMessage("Failed to load your career profile.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center min-h-screen px-6 py-16">
+        <main className="flex flex-col items-center justify-center max-w-xl w-full">
+          <p className="text-lg text-[#6b6b6b] dark:text-[#9b9b9b]">
+            Loading your career profile...
+          </p>
+        </main>
+      </div>
+    );
+  }
+
+  if (errorMessage || !profile) {
+    return (
+      <div className="flex justify-center min-h-screen px-6 py-16">
+        <main className="flex flex-col items-center text-center max-w-xl w-full">
+          <p className="text-base text-red-500 dark:text-red-400 mb-6">
+            {errorMessage || "No career analysis found."}
+          </p>
+          <button
+            onClick={() => router.push("/upload")}
+            className="px-8 py-3 text-base font-medium rounded-lg transition border-none cursor-pointer text-white bg-[#171717] hover:bg-[#333] dark:bg-[#ededed] dark:text-[#171717] dark:hover:bg-[#ccc] active:scale-98"
+          >
+            Upload Resume Again
+          </button>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex justify-center min-h-screen px-6 py-16">
       <main className="flex flex-col max-w-xl w-full">
@@ -31,68 +100,51 @@ export default function ProfilePage() {
             Career Direction
           </p>
           <p className="text-2xl font-bold text-[#171717] dark:text-[#ededed]">
-            AI Product Manager
+            {profile.career_direction}
           </p>
         </div>
 
-        {/* Key Strengths & Growth Opportunities */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-5">
-            <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
-              Key Strengths
-            </p>
-            <ul className="space-y-2">
-              {strengths.map((s) => (
-                <li
-                  key={s}
-                  className="flex items-center gap-2 text-sm text-[#171717] dark:text-[#ededed]"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0" />
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-5">
-            <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
-              Growth Opportunities
-            </p>
-            <ul className="space-y-2">
-              {opportunities.map((o) => (
-                <li
-                  key={o}
-                  className="flex items-center gap-2 text-sm text-[#171717] dark:text-[#ededed]"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
-                  {o}
-                </li>
-              ))}
-            </ul>
-          </div>
+        {/* Professional Summary */}
+        <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-6 mb-6">
+          <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
+            Professional Summary
+          </p>
+          <p className="text-sm text-[#171717] dark:text-[#ededed] leading-relaxed">
+            {profile.summary}
+          </p>
         </div>
 
-        {/* Skill Assessment */}
+        {/* Key Strengths (full width) */}
+        <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-6 mb-6">
+          <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
+            Key Strengths
+          </p>
+          <ul className="space-y-2">
+            {profile.strengths.map((s) => (
+              <li
+                key={s}
+                className="flex items-center gap-2 text-sm text-[#171717] dark:text-[#ededed]"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0" />
+                {s}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Skills */}
         <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-6 mb-12">
           <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-4">
-            Skill Assessment
+            Skills
           </p>
-          <div className="space-y-5">
-            {skills.map((skill) => (
-              <div key={skill.name}>
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-sm font-medium text-[#171717] dark:text-[#ededed]">
-                    {skill.name}
-                  </span>
-                  <span className="text-sm text-[#a0a0a0]">{skill.value}%</span>
-                </div>
-                <div className="w-full h-2 bg-[#f0f0f0] dark:bg-[#1a1a1a] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-[#171717] dark:bg-[#ededed] rounded-full transition-all duration-700"
-                    style={{ width: `${skill.value}%` }}
-                  />
-                </div>
-              </div>
+          <div className="flex flex-wrap gap-2">
+            {profile.skills.map((skill) => (
+              <span
+                key={skill}
+                className="px-3 py-1.5 text-sm rounded-lg border border-[#e5e5e5] dark:border-[#404040] text-[#171717] dark:text-[#ededed] bg-white dark:bg-[#0a0a0a]"
+              >
+                {skill}
+              </span>
             ))}
           </div>
         </div>

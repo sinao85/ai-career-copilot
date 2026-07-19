@@ -10,6 +10,8 @@ export default function UploadPage() {
   const [isDraggingWork, setIsDraggingWork] = useState(false);
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const workInputRef = useRef<HTMLInputElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const isPDFOrDocx = (file: File) =>
@@ -40,6 +42,56 @@ export default function UploadPage() {
 
   const removeWorkFile = (index: number) => {
     setWorkFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleContinue = async () => {
+    if (!resumeFile || isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const formData = new FormData();
+
+      formData.append("resume", resumeFile);
+
+      workFiles.forEach((file) => {
+        formData.append("work_materials", file);
+      });
+
+      const response = await fetch("http://127.0.0.1:8000/api/analyze", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Resume analysis failed (${response.status}): ${errorText}`
+        );
+      }
+
+      const data: unknown = await response.json();
+
+      sessionStorage.setItem(
+        "careerAnalysisResult",
+        JSON.stringify(data)
+      );
+
+      router.push("/analyze");
+    } catch (error: unknown) {
+      console.error("Resume analysis failed:", error);
+
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Resume analysis failed. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -219,17 +271,24 @@ export default function UploadPage() {
           <p className="mt-2 text-xs text-[#a0a0a0]">Optional</p>
         </div>
 
+        {/* Error message */}
+        {errorMessage && (
+          <p className="mt-3 text-sm text-red-500 dark:text-red-400">
+            {errorMessage}
+          </p>
+        )}
+
         {/* Continue button */}
         <button
-          disabled={!resumeFile}
-          onClick={() => router.push("/analyze")}
+          disabled={!resumeFile || isSubmitting}
+          onClick={handleContinue}
           className={`mt-10 px-10 py-3.5 text-base font-medium rounded-lg transition border-none w-full ${
-            resumeFile
+            resumeFile && !isSubmitting
               ? "text-white bg-[#171717] hover:bg-[#333] dark:bg-[#ededed] dark:text-[#171717] dark:hover:bg-[#ccc] active:scale-98 cursor-pointer"
               : "text-[#a0a0a0] bg-[#e5e5e5] dark:text-[#666] dark:bg-[#2a2a2a] cursor-not-allowed"
           }`}
         >
-          Continue
+          {isSubmitting ? "Analyzing..." : "Continue"}
         </button>
       </main>
     </div>

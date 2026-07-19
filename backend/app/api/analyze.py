@@ -33,7 +33,7 @@ async def analyze(
 
     return {
         "profile": profile.dict(),
-
+        "resume_text": resume_text,
         "work_materials": [
             {
                 "filename": file.filename,

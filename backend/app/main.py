@@ -1,5 +1,7 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.api.analyze import router as analyze_router
+from app.api.match import router as match_router
 
 
 app = FastAPI(
@@ -8,8 +10,16 @@ app = FastAPI(
     openapi_version="3.0.3"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(analyze_router)
+app.include_router(match_router)
 
 @app.get("/")
 def root():

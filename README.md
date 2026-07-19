@@ -12,68 +12,61 @@ AI Career Copilot helps job seekers:
 
 The goal is to use AI to bridge the gap between personal experience and career opportunities.
 
+## MVP Status
 
-## MVP v0.1
+### Completed
 
-Completed:
+- Resume upload + PDF parsing
+- AI career profile (DeepSeek LLM)
+- Profile page with real analysis data
+- Target job description input (text)
+- JD Match (LLM-powered matching)
+- Multilingual output (Chinese / English auto-detect)
+- Input validation (empty resume / empty JD)
+- End-to-end frontend ↔ backend integration
 
-- Resume upload workflow
-- AI career profile experience
-- Target job description input
-- JD matching workflow
+### Planned
+
+- PDF JD Parser
+- DOCX JD Parser
+- Screenshot / Vision JD Parser
 - Customized resume generation
-- Word/PDF resume export
-
+- Match Level (A~E) display
+- Prompt versioning & result cache
 
 ## Product Workflow
 
+```
 Resume Upload
-↓
-AI Career Analysis
-↓
-Career Profile
-↓
-Target Job Analysis
-↓
-JD Matching
-↓
-Customized Resume
-
-
-## Product Vision
-
-Most professionals have valuable career experience scattered across:
-- Resumes
-- Project documents
-- Work materials
-
-AI Career Copilot aims to transform fragmented experience into structured career intelligence.
-
-
-## Roadmap
-
-Next iterations:
-
-- Real LLM integration
-- Career knowledge base
-- RAG-based career assistant
-- Personalized career intelligence system
-
+    ↓
+AI Career Analysis (LLM)
+    ↓
+Career Profile (real data)
+    ↓
+Paste JD → JD Match (LLM)
+    ↓
+Match Results (score, strengths, gaps, recommendations)
+```
 
 ## Tech Stack
 
 Frontend:
-- Next.js
-- React
+- Next.js 16 (App Router)
+- React 19
 - TypeScript
 - Tailwind CSS
 
 Backend:
-- TBD
-
+- FastAPI (Python)
+- OpenAI SDK → DeepSeek API
+- pypdf (PDF parsing)
 
 ## Version History
 
-### v0.1 Frontend MVP
+### v0.2 — JD Match MVP
 
-Completed the full frontend product workflow and validated the MVP user journey.
+Completed JD Match backend with LLM integration, frontend-backend connection, input validation, and multilingual output.
+
+### v0.1 — Frontend MVP
+
+Completed full frontend product workflow and validated the MVP user journey.

@@ -9,6 +9,8 @@ export default function JDPage() {
   const [jdText, setJdText] = useState("");
   const [screenshots, setScreenshots] = useState<File[]>([]);
   const [documents, setDocuments] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const hasInput = useMemo(() => {
     return jdText.trim().length > 0 || screenshots.length > 0 || documents.length > 0;
@@ -47,6 +49,73 @@ export default function JDPage() {
 
   const removeDocument = (index: number) => {
     setDocuments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAnalyze = async () => {
+    if (isSubmitting) return;
+
+    // Coming soon: file upload modes
+    if (documents.length > 0) {
+      setErrorMessage("Document upload will be supported in the next version.");
+      return;
+    }
+    if (screenshots.length > 0) {
+      setErrorMessage("Screenshot parsing will be supported in the next version.");
+      return;
+    }
+
+    if (!jdText.trim()) return;
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const raw = sessionStorage.getItem("careerAnalysisResult");
+      let resumeText = "";
+      let careerProfile: unknown = null;
+
+      if (raw) {
+        const parsed: unknown = JSON.parse(raw);
+        const data = parsed as { profile: unknown; resume_text?: string };
+        careerProfile = data.profile;
+        resumeText = typeof data.resume_text === "string" ? data.resume_text : "";
+      }
+
+      const body: Record<string, unknown> = {
+        jd_text: jdText,
+        resume_text: resumeText,
+      };
+
+      if (careerProfile) {
+        body.career_profile = careerProfile;
+      }
+
+      const response = await fetch("http://127.0.0.1:8000/api/match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Match analysis failed (${response.status}): ${errorText}`
+        );
+      }
+
+      const data: unknown = await response.json();
+      sessionStorage.setItem("jdMatchResult", JSON.stringify(data));
+      router.push("/jd-match");
+    } catch (error: unknown) {
+      console.error("Match analysis failed:", error);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Match analysis failed. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -173,13 +242,24 @@ export default function JDPage() {
           </label>
         </div>
 
+        {/* Error message */}
+        {errorMessage && (
+          <p className="mt-3 text-sm text-red-500 dark:text-red-400">
+            {errorMessage}
+          </p>
+        )}
+
         {/* CTA */}
         <button
-          disabled={!hasInput}
-          onClick={() => { if (hasInput) router.push("/jd-match"); }}
-          className={`w-full px-10 py-3.5 text-base font-medium rounded-lg transition cursor-pointer border-none ${hasInput ? "text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98" : "text-[#a0a0a0] bg-[#f5f5f5] dark:bg-[#1a1a1a] cursor-not-allowed"}`}
+          disabled={!hasInput || isSubmitting}
+          onClick={handleAnalyze}
+          className={`w-full px-10 py-3.5 text-base font-medium rounded-lg transition cursor-pointer border-none ${
+            hasInput && !isSubmitting
+              ? "text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98"
+              : "text-[#a0a0a0] bg-[#f5f5f5] dark:bg-[#1a1a1a] cursor-not-allowed"
+          }`}
         >
-          Analyze Job Match
+          {isSubmitting ? "Analyzing..." : "Analyze Job Match"}
         </button>
       </main>
     </div>

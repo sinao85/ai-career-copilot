@@ -265,3 +265,59 @@ Resume PDF
 
 ### Learning
 - Swagger UI 上传失败，但 curl 成功，主要是swagger ui会错误解析，Swagger 对 multipart file array 支持不是特别友好。所以用curl测试绕过解析测试接口成功
+
+## 2026-07-18 JD Match MVP Sprint
+
+### Completed
+
+- Completed JD Match backend (`POST /api/match`)
+- Connected frontend `/jd` and `/jd-match` with backend API
+- Added resume text & JD text input validation (empty / whitespace / missing)
+- Fixed empty resume / empty JD handling (HTTP 400)
+- Fixed multilingual output: system prompt and user prompt both enforce language-follows-resume/JD
+- Removed all mock data from frontend pages (profile, jd-match)
+- Finished end-to-end testing (9 test cases)
+
+### Architecture
+
+```
+POST /api/analyze          POST /api/match
+       │                          │
+       ▼                          ▼
+document_parser.py          job_matcher.py
+       │                          │
+       ▼                          ▼
+career_analyzer.py          LLM Match Prompt
+       │                          │
+       ▼                          ▼
+   llm_client.py  ←──────── llm_client.py
+       │
+       ▼
+ OpenAI SDK → DeepSeek API
+```
+
+Parser Layer is decoupled from Match Engine. Future parsers (document, image) can be added without modifying match logic.
+
+### Test Results
+
+| Case | Scenario | Result |
+|------|----------|--------|
+| 1 | Chinese Resume + Chinese JD | 200, Chinese output |
+| 2 | English Resume + English JD | 200, English output |
+| 3 | `jd_text=""` | 400 |
+| 4 | `jd_text="   "` | 400 |
+| 5 | `resume_text=""` | 400 |
+| 6 | `resume_text="\n\t"` | 400 |
+| 7 | Both empty | 400 |
+| 8 | Mismatched job roles | 200, low match score |
+| 9 | Frontend integration | Passed |
+
+### Product Decisions
+
+1. **MVP only supports Text JD Analysis.** Frontend retains all three input methods (Paste JD, Upload Document, Upload Screenshot), but only Text Parser is implemented. Document Parser and Image Parser planned for future iterations.
+
+2. **JD Match core value is AI matching, not OCR.** Parser Layer is architecturally decoupled from Match Engine. Adding new parsers in the future requires zero changes to match logic.
+
+3. **User-facing output will use Match Level (A~E) instead of raw percentage.** Backend retains internal match_score for level mapping, model evaluation, and future optimization.
+
+4. **Future: Prompt Versioning & Result Cache.** For identical combinations of Resume + JD + Prompt Version + Model, generate a unique hash. Cache results to avoid redundant LLM calls, ensuring consistency and cost efficiency.
