@@ -15,15 +15,15 @@ SYSTEM_MESSAGE = (
 )
 
 
-class DeepSeekProvider(BaseLLMProvider):
+class GeminiProvider(BaseLLMProvider):
 
     def __init__(self):
         self.client = OpenAI(
-            api_key=os.getenv("LLM_API_KEY"),
-            base_url=os.getenv("LLM_BASE_URL"),
+            api_key=os.getenv("GEMINI_API_KEY"),
+            base_url=os.getenv("GEMINI_BASE_URL"),
         )
 
-        self.model = os.getenv("LLM_MODEL", "deepseek-chat")
+        self.model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
         self.temperature = float(os.getenv("LLM_TEMPERATURE", "0.7"))
         self.max_tokens = int(os.getenv("LLM_MAX_TOKENS", "2048"))
 
@@ -34,7 +34,7 @@ class DeepSeekProvider(BaseLLMProvider):
     ) -> str:
         if not isinstance(input_data, str):
             raise RuntimeError(
-                "DeepSeekProvider does not support multimodal input. "
+                "GeminiProvider does not support multimodal input via Message format. "
                 "Use GLMProvider for vision tasks."
             )
 

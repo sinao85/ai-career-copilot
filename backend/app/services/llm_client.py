@@ -12,6 +12,7 @@ def call_llm(prompt: str) -> str:
     调用 LLM，返回响应文本。
 
     使用 LLM_PROVIDER 环境变量选择 Provider，默认 deepseek。
+    仅支持纯文本调用。
     """
     provider = get_llm_provider()
     return provider.generate(prompt)

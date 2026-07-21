@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.analyze import router as analyze_router
+from app.api.jd import router as jd_router
 from app.api.match import router as match_router
 
 
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(analyze_router)
+app.include_router(jd_router)
 app.include_router(match_router)
 
 @app.get("/")
