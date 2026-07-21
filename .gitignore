@@ -1,13 +1,26 @@
+# Frontend
 node_modules/
-.env
-.DS_Store
-dist/
-build/
 .next/
 
+# Backend
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
 
+# Environment & OS
+.env
+.env.local
+.env.*.local
+.DS_Store
 venv/
 .venv/
-__pycache__/
+
+# Test files
 backend/temp.pdf
-.env

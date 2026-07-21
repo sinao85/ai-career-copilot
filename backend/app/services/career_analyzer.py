@@ -1,18 +1,46 @@
 import json
+import re
 
 from app.models.career_profile import CareerProfile
 from app.services.llm_client import call_llm
 
 
+def detect_resume_language(text: str) -> str:
+    """
+    根据中文字符占比判断简历的主要语言。
+
+    使用中文字符占比而非中英文字母字数，避免技术简历中大量
+    英文术语（AI、LLM、FastAPI 等）导致误判。
+
+    Returns:
+        "Chinese" 或 "English"
+    """
+    chinese_chars = re.findall(r"[\u4e00-\u9fff]", text)
+    chinese_count = len(chinese_chars)
+
+    # 总非空字符数
+    total_chars = len(re.sub(r"\s+", "", text))
+
+    if total_chars == 0:
+        return "English"
+
+    chinese_ratio = chinese_count / total_chars
+
+    # 中文字符占比超过 25% 判定为中文简历
+    return "Chinese" if chinese_ratio > 0.25 else "English"
+
+
 PROMPT_TEMPLATE = """You are a senior career advisor. Analyze the resume below and generate a career profile.
 
-Language rules (CRITICAL — follow strictly):
-- First, detect the primary language of the resume content by counting characters and complete sentences.
-- If the resume is primarily Chinese, write all JSON string values (summary, strengths, skills, career_direction) in Chinese.
-- If the resume is primarily English, write all JSON string values in English.
-- If the resume is mixed Chinese and English, use the dominant language (the one with more running text and complete sentences).
-- Do NOT use the language of these instructions to determine the output language. These instructions happen to be in English, but that is irrelevant.
-- Do NOT mistake English technical terms (e.g. AI, LLM, FastAPI, Next.js, Python) inside a Chinese resume as evidence that the resume is English.
+Language requirement (CRITICAL — follow strictly):
+
+The required output language has already been determined by the application.
+
+Required output language: {output_language}
+
+- Write all JSON string values in {output_language}.
+- Do not independently detect or change the output language.
+- Do not translate into another language.
 - Keep all JSON keys in English.
 
 Output requirements:
@@ -38,9 +66,13 @@ Resume content:
 
 
 def analyze_resume(text: str) -> CareerProfile:
+    output_language = detect_resume_language(text)
+
+    print(f"[Career Analyzer] Detected output language: {output_language}")
 
     prompt = PROMPT_TEMPLATE.format(
-        resume_text=text
+        output_language=output_language,
+        resume_text=text,
     )
 
     response = call_llm(prompt)
