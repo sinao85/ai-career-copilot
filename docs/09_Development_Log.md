@@ -321,3 +321,321 @@ Parser Layer is decoupled from Match Engine. Future parsers (document, image) ca
 3. **User-facing output will use Match Level (A~E) instead of raw percentage.** Backend retains internal match_score for level mapping, model evaluation, and future optimization.
 
 4. **Future: Prompt Versioning & Result Cache.** For identical combinations of Resume + JD + Prompt Version + Model, generate a unique hash. Cache results to avoid redundant LLM calls, ensuring consistency and cost efficiency.
+
+
+## Date
+2026-07-20
+
+---
+
+# Sprint 4 - Multimodal AI Gateway & JD Image Analysis
+
+## 🎯 Goal
+
+Enable AI Career Copilot to understand Job Description images using a multimodal LLM and complete the end-to-end workflow:
+
+JD Image Upload
+→ Vision Model
+→ Structured JD Extraction
+→ Resume Matching
+→ Frontend Display
+
+---
+
+## ✅ Completed
+
+### 1. Built Multimodal Provider Architecture
+
+Implemented a provider abstraction that separates text and vision models.
+
+Current architecture:
+
+```
+Upload
+      │
+Input Classifier
+      │
+Rule-based Router
+      │
+ ┌───────────────┐
+ │               │
+Text Model   Vision Model
+DeepSeek      GLM-4.6V-Flash
+```
+
+Added:
+
+- BaseLLMProvider
+- GLMProvider
+- Rule-based model router
+- Input classifier
+
+Environment variables:
+
+```
+TEXT_LLM_PROVIDER
+VISION_LLM_PROVIDER
+```
+
+instead of using a single global provider.
+
+---
+
+### 2. Rule-based Model Routing
+
+Implemented deterministic routing rules.
+
+Current strategy:
+
+- Text → Text LLM
+- Image → Vision LLM
+- Text PDF → Text LLM
+- Scanned PDF → Vision LLM
+
+The routing is based on input capability requirements rather than file extension only.
+
+---
+
+### 3. Added GLM-4.6V-Flash Support
+
+Integrated GLM as the first multimodal provider.
+
+Support includes:
+
+- Image input
+- OpenAI-compatible API
+- Base64 image conversion
+- Retry mechanism
+- Unified Provider interface
+
+---
+
+### 4. Retry Mechanism
+
+Implemented retry logic for temporary service overload.
+
+Strategy:
+
+Attempt 1
+↓
+
+Retry after 2 seconds
+
+↓
+
+Retry after 4 seconds
+
+↓
+
+Maximum 3 attempts
+
+Only retry for recoverable errors such as:
+
+- 429
+- 502
+- 503
+- 504
+- Service Busy
+
+Non-recoverable errors immediately return.
+
+---
+
+### 5. Image Understanding Test
+
+Created:
+
+```
+test_glm_image.py
+```
+
+Successfully verified image understanding.
+
+Test image:
+
+```
+test_jd.png
+```
+
+Result:
+
+- Correctly extracted Job Title
+- Correctly extracted Responsibilities
+- Correctly extracted Requirements
+- Correctly extracted Education & Experience
+- Returned "未识别到" when information was absent instead of hallucinating
+
+Average response time:
+
+~15 seconds
+
+---
+
+### 6. Frontend Integration
+
+Completed full workflow:
+
+JD Image Upload
+
+↓
+
+Backend
+
+↓
+
+Input Classifier
+
+↓
+
+Vision Router
+
+↓
+
+GLM
+
+↓
+
+Structured Result
+
+↓
+
+Resume Matching
+
+↓
+
+Frontend Display
+
+The complete end-to-end pipeline has been successfully validated.
+
+---
+
+# 🐛 Problems Encountered
+
+## 1. Gemini API
+
+Issue:
+
+Originally attempted to integrate Gemini.
+
+Problem:
+
+Gemini 2.0 Flash has been deprecated and quota testing was unsuccessful.
+
+Decision:
+
+Pause Gemini integration and switch to GLM as the primary multimodal provider.
+
+---
+
+## 2. GLM Service Busy
+
+Issue:
+
+Initial requests returned:
+
+Current request volume is high. Please try again later.
+
+Root Cause:
+
+Temporary server capacity during free-tier usage.
+
+Solution:
+
+Implemented retry with exponential backoff.
+
+Final Result:
+
+```
+SUCCESS after 6.1s
+```
+
+Provider implementation proved to be correct.
+
+---
+
+## 3. Vision Model Routing
+
+Initial idea:
+
+```
+Image
+↓
+
+Always use GLM
+```
+
+Improved design:
+
+```
+Input
+
+↓
+
+Rule-based Router
+
+↓
+
+Vision Provider
+```
+
+This makes it easy to switch between GLM and Doubao later.
+
+---
+
+# 💡 Key Design Decisions
+
+Instead of:
+
+```
+LLM_PROVIDER=deepseek
+```
+
+Adopted:
+
+```
+TEXT_LLM_PROVIDER
+VISION_LLM_PROVIDER
+```
+
+Benefits:
+
+- Multiple providers can coexist
+- Better scalability
+- Easier provider replacement
+- Cleaner architecture
+
+---
+
+# 📚 What I Learned
+
+### Technical
+
+- Multimodal models use OpenAI-compatible message structures.
+- Rule-based routing is simpler and more reliable than AI-based routing for MVP.
+- Retry mechanisms significantly improve robustness when using free APIs.
+- Separating text and vision providers improves maintainability.
+
+### Product Thinking
+
+The project has evolved from simply calling an LLM to building an AI Gateway.
+
+The system now routes requests based on capability requirements rather than model identity.
+
+This architecture is closer to real-world AI products.
+
+---
+
+# 🚀 Next Sprint
+
+Sprint 5
+
+Goals:
+
+- Support structured JSON output for JD extraction.
+- Add Doubao Vision Provider.
+- Compare GLM vs Doubao:
+  - Accuracy
+  - Cost
+  - Response time
+  - JSON stability
+- Continue improving AI Career Copilot toward production readiness.
