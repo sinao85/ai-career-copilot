@@ -639,3 +639,307 @@ Goals:
   - Response time
   - JSON stability
 - Continue improving AI Career Copilot toward production readiness.
+
+---
+
+# Sprint 5 - Customized Resume Generation & Delivery
+
+## Sprint Goal
+
+本阶段目标：
+
+完成从：
+
+```
+Resume Understanding
+    ↓
+JD Understanding
+    ↓
+Resume Matching
+    ↓
+Customized Resume Generation
+```
+
+的完整用户闭环。
+
+核心目标：
+
+让用户不仅知道自己是否匹配岗位，还可以直接获得针对目标岗位优化后的简历。
+
+---
+
+## Completed Features
+
+### 1. Customized Resume Generation
+
+新增 AI Resume Generator。
+
+输入：
+
+- Original Resume
+- Target Job Description
+- Career Profile
+- Match Analysis
+
+输出：
+
+- Customized Resume
+- Customization Summary
+- Key Changes
+
+设计原则：
+
+AI 可以优化表达和突出匹配能力，但必须保持用户真实经历。
+
+禁止：
+
+- 编造项目
+- 虚构技能
+- 添加不存在的数据
+- 修改事实信息
+
+---
+
+### 2. Frontend Resume Preview
+
+新增 Customized Resume 页面。
+
+实现：
+
+- AI customization reasoning 展示
+- Key changes 展示（✓ 列表样式）
+- Customized Resume Preview（按段落拆分展示，自动识别标题行）
+
+优化：
+
+从 mock resume 数据切换到真实 AI 生成结果。
+
+移除了 7 个硬编码数据常量（personalInfo、education、experiences、projects、productSkills、aiSkills、technicalSkills），所有展示均来自 `POST /api/generate` 返回的真实数据。
+
+页面目标：
+
+让用户理解 AI 为什么这样修改简历，而不仅仅看到最终文本。
+
+---
+
+### 3. HTML Resume Export
+
+新增 HTML Resume Export 能力。
+
+原因：
+
+当前阶段优先保证：
+
+- 输出稳定
+- 页面展示一致
+- 用户可以获得可使用结果
+
+技术选择：
+
+HTML 优先。
+
+相比直接生成 Word/PDF：
+
+优势：
+
+- 浏览器渲染稳定
+- 样式控制简单
+- 页面预览与下载格式同源（同一套 `parseResumeSections` + 样式）
+- 后续可以扩展 PDF 导出
+
+暂不深入：
+
+- Word Export（显示 "Coming Soon"）
+- PDF Export（显示 "Coming Soon"）
+
+后续将在 Structured Resume Schema 基础上统一实现。
+
+---
+
+### 4. Session-based Data Flow
+
+引入 sessionStorage 作为流程数据传递方式。
+
+数据流转：
+
+| 页面 | 写入 Key | 内容 |
+|---|---|---|
+| Upload | `careerAnalysisResult` | 简历文本 + 职业画像 |
+| JD | `jdText` | 目标 JD 文本 |
+| JD | `jdMatchResult` | 匹配分析结果 |
+| Custom Resume | 读取以上 3 个 key | 调用 /api/generate |
+
+当前限制：刷新后数据丢失。未来将升级为 User Account + Career Memory 持久化方案。
+
+---
+
+## Product Decisions
+
+### Decision 1: Complete User Workflow Before Deep Optimization
+
+本阶段优先完成用户完整体验闭环，而不是提前优化：
+
+- 复杂模板
+- 多格式导出
+- 高级编辑能力
+
+原因：
+
+首先验证用户是否需要 AI 生成目标岗位简历。
+
+---
+
+### Decision 2: Keep Resume Output Human-readable
+
+当前阶段优先保证：
+
+- 简历内容质量
+- 阅读体验
+- 修改逻辑透明
+
+未来：升级为结构化 Resume Schema。
+
+---
+
+### Decision 3: Three-Column Layout for Resume Delivery
+
+Customized Resume 页面采用三栏布局：
+
+```
+AI Reasoning  |  Resume Preview  |  Export
+```
+
+理由：
+
+- 用户需要理解 AI 做了什么（左侧）
+- 用户需要看到最终结果（中间）
+- 用户需要有明确的行动出口（右侧）
+
+将导出按钮从页面底部移到右侧固定区域，让用户在看完简历后自然完成导出动作，减少滚动摩擦。
+
+---
+
+## Technical Improvements
+
+完成：
+
+- Resume Generation API（`POST /api/generate`）
+- Frontend API Integration（useEffect + sessionStorage 读取）
+- Resume Preview Rendering（按空行分段 + 标题识别）
+- HTML Export Workflow（客户端生成 + API fallback）
+- Three-column responsive layout
+
+当前架构：
+
+```
+User Input
+    ↓
+LLM Processing
+    ↓
+Structured Response
+    ↓
+Frontend Presentation（分段 + 标题识别）
+    ↓
+Export（HTML / Coming Soon: Word & PDF）
+```
+
+---
+
+## Current Limitations
+
+### 1. Resume Output Schema
+
+当前：
+
+`customized_resume` 为纯文本格式。
+
+影响：
+
+- Word Export 需要结构化 Schema
+- PDF Export 需要模板引擎
+- 无法切换简历样式
+
+未来：Structured Resume Engine。
+
+---
+
+### 2. Data Persistence
+
+当前：
+
+使用 sessionStorage 保存流程数据。
+
+问题：
+
+- 刷新后数据丢失
+- 无法跨设备同步
+- 无法追踪历史版本
+
+未来：
+
+- User Account
+- Resume Storage
+- Career Memory
+
+---
+
+### 3. AI Quality Evaluation
+
+当前：
+
+主要通过人工验证 Prompt 效果。
+
+未来：
+
+- Prompt Evaluation Dataset
+- Output Quality Metrics
+- Regression Testing
+
+---
+
+## Sprint 5 Key Learning
+
+AI 产品不仅需要 Generation，还需要 Presentation + Delivery。
+
+完整 AI 产品体验：
+
+```
+Input
+    ↓
+AI Understanding
+    ↓
+AI Generation
+    ↓
+User-facing Output
+    ↓
+Actionable Delivery
+```
+
+本 Sprint 的关键洞察：
+
+> 如果 AI 生成的结果不能以用户可理解、可使用的形式交付，生成能力本身的价值会大打折扣。产品设计的工作是从"AI 能做什么"到"用户能用它做什么"的桥梁。
+
+---
+
+## Next Sprint Direction
+
+Sprint 6 优先级：
+
+1. **Product Deployment**
+   - Frontend deployment
+   - Backend deployment
+   - Environment configuration
+
+2. **AI Quality Improvement**
+   - Prompt optimization
+   - Evaluation framework
+   - Output consistency
+
+3. **Architecture Improvement**
+   - Structured Resume Schema
+   - Better Export Pipeline
+
+4. **Career OS Exploration**
+   - Career Memory
+   - Job Market Intelligence
+   - Skill Gap Recommendation
