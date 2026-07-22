@@ -294,6 +294,7 @@ export default function JDPage() {
 
       const matchData: unknown = await matchResponse.json();
       sessionStorage.setItem("jdMatchResult", JSON.stringify(matchData));
+      sessionStorage.setItem("jdText", finalJDText);
       router.push("/jd-match");
     } catch (error: unknown) {
       console.error("JD match failed:", error);
