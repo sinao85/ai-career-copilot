@@ -1,5 +1,6 @@
 from fastapi import UploadFile
 from pypdf import PdfReader
+from io import BytesIO
 
 
 async def extract_text(file: UploadFile):
@@ -10,12 +11,11 @@ async def extract_text(file: UploadFile):
 
     print("2. 文件大小:", len(content))
 
-    with open("temp.pdf", "wb") as f:
-        f.write(content)
-
     print("3. 开始PDF解析")
 
-    reader = PdfReader("temp.pdf")
+    pdf_stream = BytesIO(content)
+
+    reader = PdfReader(pdf_stream)
 
     print("4. PDF页数:", len(reader.pages))
 
