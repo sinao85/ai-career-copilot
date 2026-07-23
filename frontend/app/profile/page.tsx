@@ -53,8 +53,8 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center min-h-screen px-6 py-16">
-        <main className="flex flex-col items-center justify-center max-w-xl w-full">
+      <div className="flex justify-center px-6 py-8">
+        <main className="flex flex-col items-center justify-center max-w-3xl w-full">
           <p className="text-lg text-[#6b6b6b] dark:text-[#9b9b9b]">
             Loading your career profile...
           </p>
@@ -65,8 +65,8 @@ export default function ProfilePage() {
 
   if (errorMessage || !profile) {
     return (
-      <div className="flex justify-center min-h-screen px-6 py-16">
-        <main className="flex flex-col items-center text-center max-w-xl w-full">
+      <div className="flex justify-center px-6 py-8">
+        <main className="flex flex-col items-center text-center max-w-3xl w-full">
           <p className="text-base text-red-500 dark:text-red-400 mb-6">
             {errorMessage || "No career analysis found."}
           </p>
@@ -82,8 +82,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex justify-center min-h-screen px-6 py-16">
-      <main className="flex flex-col max-w-xl w-full">
+    <div className="flex justify-center px-6 py-8">
+      <main className="flex flex-col max-w-3xl w-full">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">

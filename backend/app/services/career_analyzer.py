@@ -77,9 +77,7 @@ def analyze_resume(text: str) -> CareerProfile:
 
     response = call_llm(prompt)
 
-    print("========== LLM RAW RESPONSE ==========")
-    print(response)
-    print("======================================")
+    print(f"[Career Analyzer] LLM response received ({len(response)} chars)")
 
     result = json.loads(response)
 

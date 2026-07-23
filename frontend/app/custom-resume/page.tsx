@@ -225,7 +225,7 @@ export default function CustomResumePage() {
   };
 
   return (
-    <div className="flex justify-center min-h-screen px-6 py-16">
+    <div className="flex justify-center px-6 py-8">
       <main className="flex flex-col w-full max-w-6xl">
         {/* Loading State */}
         {loadStatus === "loading" && (

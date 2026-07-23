@@ -2,10 +2,14 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
 from app.api.analyze import router as analyze_router
 from app.api.jd import router as jd_router
 from app.api.match import router as match_router
 from app.api.generate import router as generate_router
+from app.limiter import limiter
 
 FRONTEND_URL = os.getenv(
     "FRONTEND_URL",
@@ -17,6 +21,9 @@ app = FastAPI(
     version="0.1.0",
     openapi_version="3.0.3"
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,

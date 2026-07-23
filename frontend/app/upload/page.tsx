@@ -70,10 +70,12 @@ export default function UploadPage() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `Resume analysis failed (${response.status}): ${errorText}`
-        );
+        if (response.status === 413) {
+          throw new Error(
+            "Resume file is too large. Please upload a file smaller than 10MB."
+          );
+        }
+        throw new Error("Analysis failed. Please try again.");
       }
 
       const data: unknown = await response.json();
@@ -98,12 +100,12 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="flex justify-center min-h-screen px-6 py-16">
-      <main className="flex flex-col items-center text-center max-w-lg w-full">
-        <h1 className="text-3xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
+    <div className="flex justify-center px-6 py-8">
+      <main className="flex flex-col items-center text-center max-w-3xl w-full">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
           Upload Your Career Materials
         </h1>
-        <p className="mt-3 text-base text-[#6b6b6b] dark:text-[#9b9b9b] max-w-md">
+        <p className="mt-4 text-lg text-[#6b6b6b] dark:text-[#9b9b9b] max-w-xl">
           Upload your resume and work materials. AI will analyze them to build your career profile.
         </p>
 
@@ -156,8 +158,8 @@ export default function UploadPage() {
                   </p>
                 </div>
                 <p className="text-sm text-[#6b6b6b] dark:text-[#9b9b9b]">
-                  {(resumeFile.size / 1024).toFixed(0)} KB &middot; Upload
-                  successful
+                  {(resumeFile.size / 1024).toFixed(0)} KB &middot; Ready
+                  to analyze
                 </p>
                 <p className="text-xs text-[#a0a0a0]">Click to change file</p>
               </div>

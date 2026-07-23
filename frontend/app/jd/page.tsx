@@ -311,8 +311,8 @@ export default function JDPage() {
   const isLoading = status === "loading";
 
   return (
-    <div className="flex justify-center min-h-screen px-6 py-16">
-      <main className="flex flex-col max-w-xl w-full">
+    <div className="flex justify-center px-6 py-8">
+      <main className="flex flex-col max-w-3xl w-full">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
             Target Job Description

@@ -28,8 +28,8 @@ export default function AnalyzePage() {
   }, [router]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-8">
-      <main className="flex flex-col items-center text-center max-w-md w-full">
+    <div className="flex justify-center items-center min-h-[calc(100vh-120px)] px-8">
+      <main className="flex flex-col items-center text-center max-w-2xl w-full">
         <h1 className="text-3xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
           Analyzing Your Resume
         </h1>

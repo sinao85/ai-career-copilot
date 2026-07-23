@@ -68,9 +68,7 @@ def match_jd(request: MatchRequest) -> MatchResult:
 
     response = call_llm(prompt)
 
-    print("========== MATCH LLM RAW RESPONSE ==========")
-    print(response)
-    print("============================================")
+    print(f"[Job Matcher] LLM response received ({len(response)} chars)")
 
     result = json.loads(response)
 

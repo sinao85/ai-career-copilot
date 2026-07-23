@@ -44,6 +44,7 @@ class GLMProvider(BaseLLMProvider):
         self.client = OpenAI(
             api_key=api_key,
             base_url=base_url,
+            timeout=60.0,
         )
 
         self.model = os.getenv("GLM_MODEL", "glm-4.6v-flash")

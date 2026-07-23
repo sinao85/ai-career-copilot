@@ -162,9 +162,7 @@ def analyze_jd_image(
 
     raw_content = provider.generate(messages)
 
-    print("========== JD LLM RAW RESPONSE ==========")
-    print(raw_content)
-    print("==========================================")
+    print(f"[JD Analyzer] Vision LLM response received ({len(raw_content)} chars)")
 
     return _build_result(_parse_jd_json(raw_content), raw_content)
 
@@ -177,8 +175,6 @@ def analyze_jd_text(provider: BaseLLMProvider, jd_text: str) -> dict:
 
     raw_content = provider.generate(prompt)
 
-    print("========== JD LLM RAW RESPONSE ==========")
-    print(raw_content)
-    print("==========================================")
+    print(f"[JD Analyzer] Text LLM response received ({len(raw_content)} chars)")
 
     return _build_result(_parse_jd_json(raw_content), raw_content)

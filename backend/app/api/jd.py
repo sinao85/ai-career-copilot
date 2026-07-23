@@ -29,6 +29,8 @@ from app.services.llm.router import get_provider_for_input
 
 router = APIRouter()
 
+ALLOWED_IMAGE_TYPES = {"image/png", "image/jpeg", "image/webp"}
+
 
 def _get_provider_name(provider) -> str:
     """从 Provider 实例推断名称（GLMProvider → glm）。"""
@@ -80,15 +82,23 @@ async def analyze_jd(
         )
 
     if has_image:
-        # 校验图片类型
+        # 校验图片类型（扩展名）
         filename = jd_image.filename
         ext = _get_file_ext(filename)
 
         if not is_image_file(filename):
             raise HTTPException(
                 status_code=400,
-                detail=f"Unsupported image format: {filename}. "
-                "Supported: png, jpg, jpeg, webp.",
+                detail=f"Unsupported file type. "
+                "Supported image formats: png, jpg, jpeg, webp.",
+            )
+
+        # 校验图片 MIME 类型
+        if jd_image.content_type not in ALLOWED_IMAGE_TYPES:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported file type: {jd_image.content_type}. "
+                "Only PNG, JPEG, and WebP images are accepted.",
             )
 
         mime_type = IMAGE_EXT_TO_MIME.get(ext)

@@ -78,9 +78,7 @@ def generate_customized_resume(
 
     response = call_llm(prompt)
 
-    print("========== RESUME GENERATION RAW RESPONSE ==========")
-    print(response)
-    print("====================================================")
+    print(f"[Resume Generator] LLM response received ({len(response)} chars)")
 
     result = json.loads(response)
 
