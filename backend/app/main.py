@@ -1,9 +1,16 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.analyze import router as analyze_router
 from app.api.jd import router as jd_router
 from app.api.match import router as match_router
 from app.api.generate import router as generate_router
+
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL",
+    "http://localhost:3000",
+)
 
 app = FastAPI(
     title="AI Career Copilot Backend",
@@ -13,7 +20,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -3,6 +3,9 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+
 export default function UploadPage() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [workFiles, setWorkFiles] = useState<File[]>([]);
@@ -61,7 +64,7 @@ export default function UploadPage() {
         formData.append("work_materials", file);
       });
 
-      const response = await fetch("http://127.0.0.1:8000/api/analyze", {
+      const response = await fetch(`${API_BASE_URL}/api/analyze`, {
         method: "POST",
         body: formData,
       });

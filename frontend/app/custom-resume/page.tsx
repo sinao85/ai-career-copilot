@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+
 type LoadStatus = "loading" | "ready" | "error";
 type GenerateStatus = "idle" | "loading" | "success" | "error";
 
@@ -77,7 +80,7 @@ export default function CustomResumePage() {
     const fetchGenerate = async () => {
       setGenerateStatus("loading");
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/generate", {
+        const response = await fetch(`${API_BASE_URL}/api/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -180,7 +183,7 @@ export default function CustomResumePage() {
     if (!generateResult) return;
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/export/html", {
+      const response = await fetch(`${API_BASE_URL}/api/export/html`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

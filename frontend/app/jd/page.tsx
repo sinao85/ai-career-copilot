@@ -22,7 +22,8 @@ interface JDAnalysisResponse {
   data: JDAnalysisData;
 }
 
-const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
