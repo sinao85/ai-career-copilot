@@ -9,7 +9,7 @@ export default function StepperWrapper({ children }: { children: ReactNode }) {
   const showStepper = pathname !== "/";
 
   return (
-    <div className="pt-[56px]">
+    <div className="mt-6">
       {showStepper && <ProgressStepper />}
       {children}
     </div>

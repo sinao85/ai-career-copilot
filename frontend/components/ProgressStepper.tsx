@@ -47,8 +47,8 @@ export default function ProgressStepper() {
   const currentStepKey = STEPS[stepIndex].key;
 
   return (
-    <div className="w-full pt-6 pb-2">
-      <div className="mx-auto px-6 sm:px-10 max-w-5xl">
+    <div className="w-full pt-6 pb-4">
+      <div className="mx-auto px-6 max-w-xl">
         {/* Mobile */}
         <div className="sm:hidden">
           <div className="flex items-center gap-2 mb-2">
@@ -94,7 +94,7 @@ export default function ProgressStepper() {
                 {/* Dot */}
                 <div className="flex flex-col items-center">
                   <div
-                    className={`w-[26px] h-[26px] rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium transition-colors ${
                       isCompleted
                         ? "bg-[#171717] dark:bg-[#ededed] text-white dark:text-[#171717]"
                         : isCurrent
@@ -123,7 +123,7 @@ export default function ProgressStepper() {
                     )}
                   </div>
                   <span
-                    className={`mt-1.5 text-xs whitespace-nowrap ${
+                    className={`mt-1.5 text-[11px] whitespace-nowrap ${
                       isCurrent
                         ? "text-[#171717] dark:text-[#ededed] font-medium"
                         : "text-[#b0b0b0]"
@@ -136,7 +136,7 @@ export default function ProgressStepper() {
                 {/* Connecting line (not after last) */}
                 {idx < STEP_KEYS.length - 1 && (
                   <div
-                    className={`w-12 sm:w-16 h-px mx-2 mb-5 ${
+                    className={`w-16 sm:w-24 h-px mx-2 mb-5 ${
                       stepNumber < currentStepNum
                         ? "bg-[#171717] dark:bg-[#ededed]"
                         : "bg-[#d0d0d0]"

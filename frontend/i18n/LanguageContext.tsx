@@ -14,14 +14,14 @@ import { translations } from "./translations";
 const STORAGE_KEY = "ai-career-copilot-language";
 
 function getStoredLanguage(): Language {
-  if (typeof window === "undefined") return "zh";
+  if (typeof window === "undefined") return "en";
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "zh" || stored === "en") return stored;
   } catch {
     // localStorage unavailable
   }
-  return "zh";
+  return "en";
 }
 
 interface LanguageContextValue {
@@ -31,13 +31,13 @@ interface LanguageContextValue {
 }
 
 const LanguageContext = createContext<LanguageContextValue>({
-  language: "zh",
+  language: "en",
   setLanguage: () => {},
-  t: translations.zh,
+  t: translations.en,
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("zh");
+  const [language, setLanguageState] = useState<Language>("en");
 
   // Hydrate from localStorage on mount (client-only)
   useEffect(() => {

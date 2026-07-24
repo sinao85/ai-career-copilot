@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -112,14 +113,14 @@ function loadResumeContext(): ResumeContext | null {
 export default function JDPage() {
   const MAX_CHARS = 1500;
   const router = useRouter();
+  const { t } = useLanguage();
+  const u = t.jd;
   const [jdText, setJdText] = useState("");
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [documents, setDocuments] = useState<File[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [loadingHint, setLoadingHint] = useState(
-    "正在识别职位信息，约需 10–30 秒"
-  );
+  const [loadingHint, setLoadingHint] = useState("");
   const [result, setResult] = useState<JDAnalysisData | null>(null);
   const [resultMeta, setResultMeta] = useState<{
     provider: string;
@@ -152,9 +153,7 @@ export default function JDPage() {
         setResult(null);
         setResultMeta(null);
       } else {
-        setErrorMessage(
-          "Unsupported image format. Please use PNG, JPG, JPEG, or WebP."
-        );
+        setErrorMessage(u.errorUnsupportedImage);
       }
     }
     // 重置 input 以便重复选择同一文件
@@ -193,7 +192,7 @@ export default function JDPage() {
 
     // Document upload 仍是占位
     if (documents.length > 0) {
-      setErrorMessage("Document upload will be supported in the next version.");
+      setErrorMessage(u.errorDocumentComing);
       return;
     }
 
@@ -205,9 +204,7 @@ export default function JDPage() {
     // 统一检查 resume 上下文（图片和文本流程都需要简历才能 match）
     const resumeCtx = loadResumeContext();
     if (!resumeCtx) {
-      setErrorMessage(
-        "请先在首页上传简历并完成简历分析后，再进行 JD 匹配。"
-      );
+      setErrorMessage(u.errorNoResumeContext);
       setStatus("error");
       return;
     }
@@ -223,7 +220,7 @@ export default function JDPage() {
 
       if (hasImage) {
         // 图片流程：先调用 /api/jd/analyze 解析图片
-        setLoadingHint("正在识别职位信息，约需 10–30 秒");
+        setLoadingHint(u.loadingHintAnalyze);
 
         const formData = new FormData();
         if (hasText) {
@@ -259,9 +256,7 @@ export default function JDPage() {
         finalJDText = buildJDTextFromResult(analyzeData.data, jdText);
 
         if (!finalJDText.trim()) {
-          throw new Error(
-            "JD 解析结果为空，请尝试更清晰的截图或补充文本说明。"
-          );
+          throw new Error(u.errorEmptyAnalysis);
         }
       } else {
         // 纯文本流程：直接使用用户输入
@@ -269,7 +264,7 @@ export default function JDPage() {
       }
 
       // ---- 第二步：调用 /api/match 进行匹配 ----
-      setLoadingHint("正在匹配简历与职位，请稍候...");
+      setLoadingHint(u.loadingHintMatch);
 
       const body: Record<string, unknown> = {
         jd_text: finalJDText,
@@ -302,7 +297,7 @@ export default function JDPage() {
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : "Analysis failed. Please try again."
+          : u.errorAnalysisFailed
       );
       setStatus("error");
     }
@@ -315,20 +310,20 @@ export default function JDPage() {
       <main className="flex flex-col max-w-3xl w-full">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
-            Target Job Description
+            {u.title}
           </h1>
           <p className="mt-2 text-base text-[#6b6b6b] dark:text-[#9b9b9b]">
-            Paste job description or upload files to analyze
+            {u.subtitle1}
           </p>
           <p className="mt-1.5 text-sm text-[#a0a0a0]">
-            Choose one input method: paste text, upload screenshot, or upload document.
+            {u.subtitle2}
           </p>
         </div>
 
         {/* Text Input */}
         <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-6 mb-6">
           <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
-            Paste Job Description
+            {u.pasteLabel}
           </p>
           <textarea
             value={jdText}
@@ -337,7 +332,7 @@ export default function JDPage() {
               if (val.length <= MAX_CHARS) setJdText(val);
             }}
             maxLength={MAX_CHARS}
-            placeholder="Paste job description text here..."
+            placeholder={u.textPlaceholder}
             className="w-full h-24 px-4 py-3 text-sm text-[#171717] dark:text-[#ededed] bg-[#fafafa] dark:bg-[#1a1a1a] border border-[#e5e5e5] dark:border-[#2a2a2a] rounded-lg resize-none focus:outline-none focus:border-[#171717] dark:focus:border-[#ededed]"
           />
           <p className="text-right text-xs text-[#a0a0a0] mt-1.5">
@@ -364,7 +359,7 @@ export default function JDPage() {
             }`}
           >
             <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
-              Upload Screenshot
+              {u.uploadScreenshot}
             </p>
             {screenshot ? (
               <div className="space-y-1.5">
@@ -385,16 +380,16 @@ export default function JDPage() {
                     }}
                     className="text-xs text-red-500 hover:text-red-600 flex-shrink-0"
                   >
-                    Remove
+                    {u.remove}
                   </button>
                 </div>
                 <p className="text-xs text-[#a0a0a0] mt-2">
-                  Click to replace
+                  {u.clickToReplace}
                 </p>
               </div>
             ) : (
               <p className="text-xs text-[#6b6b6b] dark:text-[#9b9b9b]">
-                Click to upload PNG / JPG / WebP
+                {u.clickToUploadImage}
               </p>
             )}
           </label>
@@ -417,7 +412,7 @@ export default function JDPage() {
             }`}
           >
             <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
-              Upload Document
+              {u.uploadDocument}
             </p>
             {documents.length > 0 ? (
               <div className="space-y-1.5">
@@ -437,15 +432,15 @@ export default function JDPage() {
                       }}
                       className="text-xs text-red-500 hover:text-red-600 flex-shrink-0"
                     >
-                      Remove
+                      {u.remove}
                     </button>
                   </div>
                 ))}
-                <p className="text-xs text-[#a0a0a0] mt-2">Click to add more</p>
+                <p className="text-xs text-[#a0a0a0] mt-2">{u.clickToAddMore}</p>
               </div>
             ) : (
               <p className="text-xs text-[#6b6b6b] dark:text-[#9b9b9b]">
-                Click to upload PDF / DOCX
+                {u.clickToUploadDoc}
               </p>
             )}
           </label>
@@ -455,7 +450,7 @@ export default function JDPage() {
         {isLoading && (
           <div className="mt-3 mb-3 flex items-center justify-center gap-2 text-sm text-[#6b6b6b] dark:text-[#9b9b9b]">
             <div className="w-4 h-4 border-2 border-[#a0a0a0] border-t-transparent rounded-full animate-spin" />
-            <span>{loadingHint}</span>
+            <span>{loadingHint || u.loadingHintAnalyze}</span>
           </div>
         )}
 
@@ -476,7 +471,7 @@ export default function JDPage() {
               : "text-[#a0a0a0] bg-[#f5f5f5] dark:bg-[#1a1a1a] cursor-not-allowed"
           }`}
         >
-          {isLoading ? "Analyzing..." : "Analyze Job Match"}
+          {isLoading ? u.analyzing : u.analyzeButton}
         </button>
 
         {/* Success Result */}
@@ -484,7 +479,7 @@ export default function JDPage() {
           <div className="mt-8 rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-6 bg-[#fafafa] dark:bg-[#1a1a1a]">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-[#171717] dark:text-[#ededed]">
-                JD Analysis Result
+                {u.resultTitle}
               </h2>
               {resultMeta && (
                 <span className="text-xs text-[#a0a0a0]">
@@ -497,17 +492,17 @@ export default function JDPage() {
               {/* 岗位名称 */}
               <div>
                 <p className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wide mb-1">
-                  岗位名称
+                  {u.fieldJobTitle}
                 </p>
                 <p className="text-sm text-[#171717] dark:text-[#ededed]">
-                  {result.job_title || "未识别到"}
+                  {result.job_title || u.unidentified}
                 </p>
               </div>
 
               {/* 岗位职责 */}
               <div>
                 <p className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wide mb-1">
-                  岗位职责
+                  {u.fieldResponsibilities}
                 </p>
                 {result.responsibilities.length > 0 ? (
                   <ul className="list-disc list-inside space-y-1">
@@ -521,14 +516,14 @@ export default function JDPage() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-[#a0a0a0]">未识别到</p>
+                  <p className="text-sm text-[#a0a0a0]">{u.unidentified}</p>
                 )}
               </div>
 
               {/* 任职要求 */}
               <div>
                 <p className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wide mb-1">
-                  任职要求
+                  {u.fieldRequirements}
                 </p>
                 {result.requirements.length > 0 ? (
                   <ul className="list-disc list-inside space-y-1">
@@ -542,37 +537,37 @@ export default function JDPage() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-[#a0a0a0]">未识别到</p>
+                  <p className="text-sm text-[#a0a0a0]">{u.unidentified}</p>
                 )}
               </div>
 
               {/* 工作地点 */}
               <div>
                 <p className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wide mb-1">
-                  工作地点
+                  {u.fieldLocation}
                 </p>
                 <p className="text-sm text-[#171717] dark:text-[#ededed]">
-                  {result.location || "未识别到"}
+                  {result.location || u.unidentified}
                 </p>
               </div>
 
               {/* 学历与经验要求 */}
               <div>
                 <p className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wide mb-1">
-                  学历与经验要求
+                  {u.fieldEducation}
                 </p>
                 <p className="text-sm text-[#171717] dark:text-[#ededed]">
-                  {result.education_experience || "未识别到"}
+                  {result.education_experience || u.unidentified}
                 </p>
               </div>
 
               {/* 岗位薪资范围 */}
               <div>
                 <p className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wide mb-1">
-                  岗位薪资范围
+                  {u.fieldSalary}
                 </p>
                 <p className="text-sm text-[#171717] dark:text-[#ededed]">
-                  {result.salary_range || "未识别到"}
+                  {result.salary_range || u.unidentified}
                 </p>
               </div>
 
@@ -580,7 +575,7 @@ export default function JDPage() {
               {result.raw_content && (
                 <div className="mt-4 pt-4 border-t border-[#e5e5e5] dark:border-[#2a2a2a]">
                   <p className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wide mb-1">
-                    Raw Content (debug)
+                    {u.fieldRawContent}
                   </p>
                   <pre className="text-xs text-[#6b6b6b] dark:text-[#9b9b9b] bg-white dark:bg-[#0a0a0a] border border-[#e5e5e5] dark:border-[#2a2a2a] rounded-lg p-3 overflow-auto max-h-48 whitespace-pre-wrap">
                     {result.raw_content}

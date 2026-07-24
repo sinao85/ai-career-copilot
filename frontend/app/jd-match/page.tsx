@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface MatchResult {
   match_score: number;
@@ -12,13 +13,6 @@ interface MatchResult {
   recommendations: string[];
 }
 
-const scoreLabel = (score: number): string => {
-  if (score >= 85) return "Strong Match";
-  if (score >= 65) return "Good Match";
-  if (score >= 45) return "Moderate Match";
-  return "Low Match";
-};
-
 const scoreColor = (score: number): string => {
   if (score >= 85) return "text-green-600 dark:text-green-400";
   if (score >= 65) return "text-amber-600 dark:text-amber-400";
@@ -27,6 +21,16 @@ const scoreColor = (score: number): string => {
 
 export default function JDMatchPage() {
   const router = useRouter();
+  const { t } = useLanguage();
+  const u = t.match;
+
+  const scoreLabel = (score: number): string => {
+    if (score >= 85) return u.strongMatch;
+    if (score >= 65) return u.goodMatch;
+    if (score >= 45) return u.moderateMatch;
+    return u.lowMatch;
+  };
+
   const [match, setMatch] = useState<MatchResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -36,9 +40,7 @@ export default function JDMatchPage() {
       const raw = sessionStorage.getItem("jdMatchResult");
 
       if (!raw) {
-        setErrorMessage(
-          "No match analysis found. Please enter a job description and analyze it first."
-        );
+        setErrorMessage(u.errorNoData);
         return;
       }
 
@@ -49,14 +51,14 @@ export default function JDMatchPage() {
         typeof data?.match_score !== "number" ||
         !Array.isArray(data?.matched_strengths)
       ) {
-        setErrorMessage("Invalid match data. Please try analyzing the job description again.");
+        setErrorMessage(u.errorInvalidData);
         return;
       }
 
       setMatch(data);
     } catch (error: unknown) {
       console.error("Failed to parse match result:", error);
-      setErrorMessage("Failed to load match analysis.");
+      setErrorMessage(u.errorLoadFailed);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +69,7 @@ export default function JDMatchPage() {
       <div className="flex justify-center px-6 py-8">
         <main className="flex flex-col items-center justify-center max-w-3xl w-full">
           <p className="text-lg text-[#6b6b6b] dark:text-[#9b9b9b]">
-            Loading match analysis...
+            {u.loading}
           </p>
         </main>
       </div>
@@ -79,13 +81,13 @@ export default function JDMatchPage() {
       <div className="flex justify-center px-6 py-8">
         <main className="flex flex-col items-center text-center max-w-3xl w-full">
           <p className="text-base text-red-500 dark:text-red-400 mb-6">
-            {errorMessage || "No match analysis found."}
+            {errorMessage || u.errorNoData}
           </p>
           <button
             onClick={() => router.push("/jd")}
             className="px-8 py-3 text-base font-medium rounded-lg transition border-none cursor-pointer text-white bg-[#171717] hover:bg-[#333] dark:bg-[#ededed] dark:text-[#171717] dark:hover:bg-[#ccc] active:scale-98"
           >
-            Enter Job Description
+            {u.enterJD}
           </button>
         </main>
       </div>
@@ -98,17 +100,17 @@ export default function JDMatchPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
-            AI Job Match Analysis
+            {u.title}
           </h1>
           <p className="mt-2 text-base text-[#6b6b6b] dark:text-[#9b9b9b]">
-            See how your experience matches this opportunity.
+            {u.subtitle}
           </p>
         </div>
 
         {/* Match Score */}
         <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-8 mb-6 text-center">
           <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-4">
-            Match Score
+            {u.matchScore}
           </p>
           <p className="text-5xl font-bold text-[#171717] dark:text-[#ededed] mb-2">
             {match.match_score}%
@@ -121,7 +123,7 @@ export default function JDMatchPage() {
         {/* Match Summary */}
         <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-6 mb-6">
           <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
-            Analysis Summary
+            {u.analysisSummary}
           </p>
           <p className="text-sm text-[#171717] dark:text-[#ededed] leading-relaxed">
             {match.summary}
@@ -133,7 +135,7 @@ export default function JDMatchPage() {
           {/* Strengths */}
           <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-5">
             <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
-              Matching Strengths
+            {u.matchingStrengths}
             </p>
             <ul className="space-y-2">
               {match.matched_strengths.map((s) => (
@@ -151,7 +153,7 @@ export default function JDMatchPage() {
           {/* Skill Gaps */}
           <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-5">
             <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-3">
-              Skill Gaps
+              {u.skillGaps}
             </p>
             <ul className="space-y-2">
               {match.skill_gaps.map((g) => (
@@ -170,7 +172,7 @@ export default function JDMatchPage() {
         {/* Missing Keywords */}
         <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-6 mb-6">
           <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-4">
-            Missing Keywords
+            {u.missingKeywords}
           </p>
           <div className="flex flex-wrap gap-2">
             {match.missing_keywords.map((kw) => (
@@ -187,7 +189,7 @@ export default function JDMatchPage() {
         {/* Recommendations */}
         <div className="rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-6 mb-12">
           <p className="text-sm font-medium text-[#a0a0a0] uppercase tracking-wide mb-4">
-            Recommendations
+            {u.recommendations}
           </p>
           <ul className="space-y-3">
             {match.recommendations.map((r) => (
@@ -207,7 +209,7 @@ export default function JDMatchPage() {
           onClick={() => router.push("/custom-resume")}
           className="w-full px-10 py-3.5 text-base font-medium text-white bg-[#171717] dark:bg-[#ededed] dark:text-[#171717] rounded-lg hover:bg-[#333] dark:hover:bg-[#ccc] active:scale-98 transition cursor-pointer border-none"
         >
-          Generate Customized Resume
+          {u.generateResume}
         </button>
       </main>
     </div>

@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
-const steps = [
-  { id: 1, label: "Extracting experience" },
-  { id: 2, label: "Analyzing skills" },
-  { id: 3, label: "Creating career profile" },
-];
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function AnalyzePage() {
+  const { t } = useLanguage();
+
+  const steps = [
+    { id: 1, label: t.analyze.step1 },
+    { id: 2, label: t.analyze.step2 },
+    { id: 3, label: t.analyze.step3 },
+  ];
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
 
@@ -31,10 +33,10 @@ export default function AnalyzePage() {
     <div className="flex justify-center items-center min-h-[calc(100vh-120px)] px-8">
       <main className="flex flex-col items-center text-center max-w-2xl w-full">
         <h1 className="text-3xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
-          Analyzing Your Resume
+          {t.analyze.title}
         </h1>
         <p className="mt-2 text-base text-[#6b6b6b] dark:text-[#9b9b9b]">
-          Our AI is processing your resume. This will only take a few seconds.
+          {t.analyze.description}
         </p>
 
         {/* Spinner */}

@@ -2,11 +2,13 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
 export default function UploadPage() {
+  const { t } = useLanguage();
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [workFiles, setWorkFiles] = useState<File[]>([]);
   const [isDraggingResume, setIsDraggingResume] = useState(false);
@@ -101,21 +103,21 @@ export default function UploadPage() {
 
   return (
     <div className="flex justify-center px-6 py-8">
-      <main className="flex flex-col items-center text-center max-w-3xl w-full">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
-          Upload Your Career Materials
+      <main className="flex flex-col items-center text-center max-w-2xl w-full">
+        <h1 className="text-[28px] sm:text-[32px] font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
+          {t.upload.pageTitle}
         </h1>
-        <p className="mt-4 text-lg text-[#6b6b6b] dark:text-[#9b9b9b] max-w-xl">
-          Upload your resume and work materials. AI will analyze them to build your career profile.
+        <p className="mt-2 text-sm sm:text-base text-[#6b6b6b] dark:text-[#9b9b9b] max-w-lg">
+          {t.upload.pageDescription}
         </p>
 
         {/* Resume Upload Section */}
-        <div className="mt-10 w-full text-left">
-          <p className="text-sm font-semibold text-[#171717] dark:text-[#ededed] mb-1">
-            Resume <span className="text-red-400">*</span>
+        <div className="mt-8 w-full text-left">
+          <p className="text-[13px] sm:text-sm font-semibold text-[#171717] dark:text-[#ededed] mb-1">
+            {t.upload.resumeLabel} <span className="text-red-400">*</span>
           </p>
-          <p className="text-sm text-[#6b6b6b] dark:text-[#9b9b9b] mb-3">
-            Upload your resume (PDF / DOCX)
+          <p className="text-xs sm:text-[13px] text-[#6b6b6b] dark:text-[#9b9b9b] mb-3">
+            {t.upload.resumeHint}
           </p>
           <div
             onDragOver={(e) => {
@@ -129,7 +131,7 @@ export default function UploadPage() {
               handleResumeFile(e.dataTransfer.files[0] ?? null);
             }}
             onClick={() => resumeInputRef.current?.click()}
-            className={`w-full border-2 border-dashed rounded-xl p-8 cursor-pointer transition-colors ${
+            className={`w-full border-2 border-dashed rounded-xl py-8 px-6 min-h-[110px] cursor-pointer transition-colors ${
               isDraggingResume
                 ? "border-[#171717] bg-[#f5f5f5] dark:border-[#ededed] dark:bg-[#1a1a1a]"
                 : resumeFile
@@ -158,18 +160,17 @@ export default function UploadPage() {
                   </p>
                 </div>
                 <p className="text-sm text-[#6b6b6b] dark:text-[#9b9b9b]">
-                  {(resumeFile.size / 1024).toFixed(0)} KB &middot; Ready
-                  to analyze
+                  {(resumeFile.size / 1024).toFixed(0)} KB &middot; {t.upload.readyToAnalyze}
                 </p>
-                <p className="text-xs text-[#a0a0a0]">Click to change file</p>
+                <p className="text-xs text-[#a0a0a0]">{t.upload.clickToChangeFile}</p>
               </div>
             ) : (
               <div className="space-y-1 text-center">
                 <p className="text-base text-[#6b6b6b] dark:text-[#9b9b9b]">
-                  Drag & drop your resume here
+                  {t.upload.resumeDropText}
                 </p>
                 <p className="text-sm text-[#a0a0a0]">
-                  or click to browse files
+                  {t.upload.resumeBrowseText}
                 </p>
               </div>
             )}
@@ -184,13 +185,12 @@ export default function UploadPage() {
         </div>
 
         {/* Work & Project Materials Section */}
-        <div className="mt-8 w-full text-left">
-          <p className="text-sm font-semibold text-[#171717] dark:text-[#ededed] mb-1">
-            Work & Project Materials
+        <div className="mt-6 w-full text-left">
+          <p className="text-[13px] sm:text-sm font-semibold text-[#171717] dark:text-[#ededed] mb-1">
+            {t.upload.workLabel}
           </p>
-          <p className="text-sm text-[#6b6b6b] dark:text-[#9b9b9b] mb-3">
-            Upload PRDs, project documents, reports, portfolios or other career
-            materials.
+          <p className="text-xs sm:text-[13px] text-[#6b6b6b] dark:text-[#9b9b9b] mb-3">
+            {t.upload.workHint}
           </p>
           <div
             onDragOver={(e) => {
@@ -204,7 +204,7 @@ export default function UploadPage() {
               handleWorkFiles(Array.from(e.dataTransfer.files));
             }}
             onClick={() => workInputRef.current?.click()}
-            className={`w-full border-2 border-dashed rounded-xl p-8 cursor-pointer transition-colors ${
+            className={`w-full border-2 border-dashed rounded-xl py-8 px-6 min-h-[110px] cursor-pointer transition-colors ${
               isDraggingWork
                 ? "border-[#171717] bg-[#f5f5f5] dark:border-[#ededed] dark:bg-[#1a1a1a]"
                 : workFiles.length > 0
@@ -244,21 +244,21 @@ export default function UploadPage() {
                       }}
                       className="text-xs text-red-500 hover:text-red-600 flex-shrink-0 cursor-pointer"
                     >
-                      Remove
+                      {t.upload.remove}
                     </button>
                   </div>
                 ))}
                 <p className="text-xs text-[#a0a0a0] mt-2">
-                  Click to add more files
+                  {t.upload.clickToAddMore}
                 </p>
               </div>
             ) : (
               <div className="space-y-1 text-center">
                 <p className="text-base text-[#6b6b6b] dark:text-[#9b9b9b]">
-                  Drag & drop work materials here
+                  {t.upload.workDropText}
                 </p>
                 <p className="text-sm text-[#a0a0a0]">
-                  PDF / DOCX / PPT / TXT
+                  {t.upload.workFormats}
                 </p>
               </div>
             )}
@@ -273,7 +273,7 @@ export default function UploadPage() {
               className="hidden"
             />
           </div>
-          <p className="mt-2 text-xs text-[#a0a0a0]">Optional</p>
+          <p className="mt-2 text-xs text-[#a0a0a0]">{t.upload.optional}</p>
         </div>
 
         {/* Error message */}
@@ -287,13 +287,13 @@ export default function UploadPage() {
         <button
           disabled={!resumeFile || isSubmitting}
           onClick={handleContinue}
-          className={`mt-10 px-10 py-3.5 text-base font-medium rounded-lg transition border-none w-full ${
+          className={`mt-6 px-10 py-3 text-base font-medium rounded-lg transition border-none w-full ${
             resumeFile && !isSubmitting
               ? "text-white bg-[#171717] hover:bg-[#333] dark:bg-[#ededed] dark:text-[#171717] dark:hover:bg-[#ccc] active:scale-98 cursor-pointer"
               : "text-[#a0a0a0] bg-[#e5e5e5] dark:text-[#666] dark:bg-[#2a2a2a] cursor-not-allowed"
           }`}
         >
-          {isSubmitting ? "Analyzing..." : "Continue"}
+          {isSubmitting ? t.upload.analyzing : t.upload.continue}
         </button>
       </main>
     </div>

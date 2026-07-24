@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
@@ -30,6 +31,8 @@ export default function CustomResumePage() {
   const [generateResult, setGenerateResult] = useState<GenerateResult | null>(null);
   const [generateStatus, setGenerateStatus] = useState<GenerateStatus>("idle");
   const [generateError, setGenerateError] = useState("");
+  const { t } = useLanguage();
+  const u = t.customResume;
 
   useEffect(() => {
     try {
@@ -221,7 +224,7 @@ export default function CustomResumePage() {
   };
 
   const showComingSoon = () => {
-    alert("Coming Soon");
+    alert(u.comingSoon);
   };
 
   return (
@@ -232,7 +235,7 @@ export default function CustomResumePage() {
           <div className="flex items-center justify-center gap-3 py-20">
             <div className="w-5 h-5 border-2 border-[#a0a0a0] border-t-transparent rounded-full animate-spin" />
             <span className="text-sm text-[#6b6b6b] dark:text-[#9b9b9b]">
-              正在读取数据...
+              {u.loadingData}
             </span>
           </div>
         )}
@@ -247,7 +250,7 @@ export default function CustomResumePage() {
               onClick={() => router.push("/")}
               className="px-6 py-2.5 text-sm font-medium rounded-lg border border-[#d4d4d4] dark:border-[#404040] text-[#6b6b6b] dark:text-[#9b9b9b] hover:bg-[#f5f5f5] dark:hover:bg-[#1a1a1a] transition cursor-pointer"
             >
-              返回首页重新开始
+              {u.backToHomeRestart}
             </button>
           </div>
         )}
@@ -258,10 +261,10 @@ export default function CustomResumePage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-[#171717] dark:text-[#ededed]">
-            Your Customized Resume
+            {u.title}
           </h1>
           <p className="mt-2 text-base text-[#6b6b6b] dark:text-[#9b9b9b]">
-            Optimized for your target job
+            {u.subtitle}
           </p>
         </div>
 
@@ -270,7 +273,7 @@ export default function CustomResumePage() {
           <div className="flex items-center justify-center gap-3 py-12">
             <div className="w-5 h-5 border-2 border-[#a0a0a0] border-t-transparent rounded-full animate-spin" />
             <span className="text-sm text-[#6b6b6b] dark:text-[#9b9b9b]">
-              AI 正在生成定制简历...
+              {u.generating}
             </span>
           </div>
         )}
@@ -285,7 +288,7 @@ export default function CustomResumePage() {
               onClick={() => router.push("/")}
               className="px-6 py-2.5 text-sm font-medium rounded-lg border border-[#d4d4d4] dark:border-[#404040] text-[#6b6b6b] dark:text-[#9b9b9b] hover:bg-[#f5f5f5] dark:hover:bg-[#1a1a1a] transition cursor-pointer"
             >
-              返回首页重新开始
+              {u.backToHomeRestart}
             </button>
           </div>
         )}
@@ -299,13 +302,13 @@ export default function CustomResumePage() {
           <div className="lg:w-64 lg:flex-shrink-0">
             <div className="lg:sticky lg:top-16">
               <h2 className="text-lg font-semibold text-[#171717] dark:text-[#ededed] mb-4">
-                How AI Customized Your Resume
+                {u.howCustomized}
               </h2>
 
               <div className="space-y-5">
                 <div>
                   <p className="text-sm font-medium text-[#171717] dark:text-[#ededed] mb-1.5">
-                    Customization Summary
+                    {u.customizationSummary}
                   </p>
                   <p className="text-sm text-[#6b6b6b] dark:text-[#9b9b9b]">
                     {generateResult.customization_summary}
@@ -314,7 +317,7 @@ export default function CustomResumePage() {
 
                 <div>
                   <p className="text-sm font-medium text-[#171717] dark:text-[#ededed] mb-2">
-                    Key Changes
+                    {u.keyChanges}
                   </p>
                   <ul className="space-y-1.5">
                     {generateResult.key_changes.map((change, i) => (
@@ -372,7 +375,7 @@ export default function CustomResumePage() {
           <div className="lg:w-44 lg:flex-shrink-0">
             <div className="lg:sticky lg:top-16 rounded-xl border border-[#e5e5e5] dark:border-[#2a2a2a] p-5">
               <h3 className="text-sm font-semibold text-[#171717] dark:text-[#ededed] mb-4">
-                Export Resume
+                {u.exportResume}
               </h3>
 
               <div className="space-y-2.5">
@@ -380,21 +383,21 @@ export default function CustomResumePage() {
                   onClick={handleDownloadHTML}
                   className="w-full px-4 py-2.5 text-sm font-medium rounded-lg border border-[#d4d4d4] dark:border-[#404040] text-[#171717] dark:text-[#ededed] hover:bg-[#f5f5f5] dark:hover:bg-[#1a1a1a] transition cursor-pointer"
                 >
-                  Download HTML
+                  {u.downloadHTML}
                 </button>
 
                 <button
                   onClick={showComingSoon}
                   className="w-full px-4 py-2.5 text-sm font-medium rounded-lg border border-[#d4d4d4] dark:border-[#404040] text-[#6b6b6b] dark:text-[#9b9b9b] hover:bg-[#f5f5f5] dark:hover:bg-[#1a1a1a] transition cursor-pointer"
                 >
-                  Download Word
+                  {u.downloadWord}
                 </button>
 
                 <button
                   onClick={showComingSoon}
                   className="w-full px-4 py-2.5 text-sm font-medium rounded-lg border border-[#d4d4d4] dark:border-[#404040] text-[#6b6b6b] dark:text-[#9b9b9b] hover:bg-[#f5f5f5] dark:hover:bg-[#1a1a1a] transition cursor-pointer"
                 >
-                  Download PDF
+                  {u.downloadPDF}
                 </button>
               </div>
 
@@ -402,7 +405,7 @@ export default function CustomResumePage() {
                 onClick={() => router.push("/")}
                 className="mt-5 w-full py-2 text-xs font-medium text-[#a0a0a0] hover:text-[#6b6b6b] dark:hover:text-[#9b9b9b] transition cursor-pointer"
               >
-                Back to Home
+                {u.backToHome}
               </button>
             </div>
           </div>

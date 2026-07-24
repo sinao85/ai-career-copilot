@@ -19,7 +19,7 @@ export default function LanguageSwitcher() {
 
   return (
     <div
-      className="flex items-center gap-1.5 text-base sm:text-lg"
+      className="flex items-center gap-1 text-[13px]"
       role="group"
       aria-label="Language switcher"
     >
